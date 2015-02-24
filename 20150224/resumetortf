@@ -1,0 +1,306 @@
+#!/Users/jeff/.virtualenv/ppd/bin/python
+
+""" Simple application to convert resume.xml into an RTF document.
+"""
+
+import argparse
+import re
+import sys
+import xml.etree.ElementTree as et
+
+import PyRTF as rtf
+
+
+class Resume(object):
+  def __init__(self):
+    self.ss = self.stylesheet()
+    self.doc = rtf.Document(style_sheet=self.ss)
+    self.sec = rtf.Section()
+    self.doc.Sections.append(self.sec)
+    self.actions = self.make_actions()
+
+  def make_actions(self):
+    a = {}
+    a['resume:name'] = self.name
+    a['resume:address'] = self.address
+    a['resume:phone'] = self.phone
+    a['resume:email'] = self.email
+    a['resume:employment_history:employer:name'] = self.employer_name
+    a['resume:employment_history:employer:position'] = self.job_title
+    a['resume:employment_history:employer:url'] = self.employer_url
+    a['resume:employment_history:employer:startdate'] = self.start_employment
+    a['resume:employment_history:employer:startdate:month'] = self.employment_month
+    a['resume:employment_history:employer:startdate:year'] = self.employment_year
+    a['resume:employment_history:employer:enddate'] = self.end_employment
+    a['resume:employment_history:employer:enddate:month'] = self.employment_month
+    a['resume:employment_history:employer:enddate:year'] = self.employment_year
+    a['resume:employment_history:employer:duties:duty'] = self.job_duty
+    a['resume:skills'] = self.skills
+    a['resume:skills:skill'] = self.skill
+    a['resume:education'] = self.education
+    a['resume:education:stint:location'] = self.school
+    a['resume:education:stint:startdate'] = self.start_stint
+    a['resume:education:stint:startdate:year'] = self.stint_year
+    a['resume:education:stint:enddate'] = self.end_stint
+    a['resume:education:stint:enddate:year'] = self.stint_year
+    a['resume:education:stint:certificate'] = self.cert
+    return a
+
+  @classmethod
+  def render(cls, tree, out):
+    """Render a resume.xml ElementTree into the file 'out'
+
+    :param tree: an ElementTree.getroot() containing the resume to render
+    :param out: a writable file
+    :return:
+    """
+    r = Resume()
+    for p, t in paths(tree):
+      if p in r.actions:
+        r.actions[p](t)
+    rtf.Renderer().Write(r.doc, out)
+
+  # Actions
+  def name(self, t):
+    self.p(self.ss.ParagraphStyles.Name, t.text)
+
+  def address(self, t):
+    self.p(self.ss.ParagraphStyles.Address, t.text)
+
+  def phone(self, t):
+    self.p(self.ss.ParagraphStyles.Phone, t.text)
+
+  def email(self, t):
+    self.p(self.ss.ParagraphStyles.Email, t.text)
+
+  def employer_name(self, t):
+    self.p(self.ss.ParagraphStyles.EmployerName, t.text)
+
+  def job_title(self, t):
+    self.p(self.ss.ParagraphStyles.JobTitle, t.text)
+
+  def employer_url(self, t):
+    self.p(self.ss.ParagraphStyles.EmployerURL, t.text)
+
+  def start_employment(self, _):
+    self.p(self.ss.ParagraphStyles.EmploymentDate)
+
+  def employment_month(self, t):
+    self.para.append(t.text + '/')
+
+  def employment_year(self, t):
+    self.para.append(t.text)
+
+  def end_employment(self, _):
+    self.para.append(' - ')
+
+  def job_duty(self, t):
+    self.p(self.ss.ParagraphStyles.JobDuty, "*", rtf.TAB, unwrap(t.text))
+
+  def skills(self, _):
+    self.p(self.ss.ParagraphStyles.SkillsHeader, 'Skills')
+
+  def skill(self, t):
+    self.p(self.ss.ParagraphStyles.Skill, "*", rtf.TAB, unwrap(t.text))
+
+  def education(self, _):
+    self.p(self.ss.ParagraphStyles.EducationHeader, 'Education')
+
+  def school(self, t):
+    self.p(self.ss.ParagraphStyles.School, t.text)
+
+  def start_stint(self, t):
+    self.p(self.ss.ParagraphStyles.EducationDate)
+
+  def stint_year(self, t):
+    self.para.append(t.text)
+
+  def end_stint(self, _):
+    self.para.append(' - ')
+
+  def cert(self, t):
+    self.p(self.ss.ParagraphStyles.School, t.text)
+
+  def p(self, style, *text):
+    """Produce a paragraph.
+
+    :param style: the paragraph's style
+    :param text: the text to include in the paragraph
+    :return:
+    """
+    self.para = rtf.Paragraph(style)
+    self.sec.append(self.para)
+    if text:
+      self.para.append(*text)
+
+  def stylesheet(self):
+    tab = rtf.TabPropertySet(width=120)
+    s = rtf.StyleSheet()
+    NormalText = rtf.TextStyle(rtf.TextPropertySet(s.Fonts.Arial, 12))
+
+    ps = rtf.ParagraphStyle('Normal',
+                            NormalText.Copy(),
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('Name',
+                            ts,
+                            rtf.ParagraphPropertySet(alignment=rtf.ParagraphPropertySet.CENTER,
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ps = rtf.ParagraphStyle('Address',
+                            NormalText.Copy(),
+                            rtf.ParagraphPropertySet(alignment=rtf.ParagraphPropertySet.CENTER,
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ps = rtf.ParagraphStyle('Phone',
+                            NormalText.Copy(),
+                            rtf.ParagraphPropertySet(alignment=rtf.ParagraphPropertySet.CENTER,
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ps = rtf.ParagraphStyle('Email',
+                            NormalText.Copy(),
+                            rtf.ParagraphPropertySet(alignment=rtf.ParagraphPropertySet.CENTER,
+                                                     space_before=4,
+                                                     space_after=160))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetBold(True)
+    ps = rtf.ParagraphStyle('EmployerName',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=80,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('JobTitle',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('EmployerURL',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=40,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('EmploymentDate',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=16))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('JobDuty',
+                            ts,
+                            rtf.ParagraphPropertySet(tabs=[tab],
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(12).SetBold(False)
+    ps = rtf.ParagraphStyle('Skill',
+                            ts,
+                            rtf.ParagraphPropertySet(tabs=[tab],
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('SkillsHeader',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=120,
+                                                     space_after=20))
+    s.ParagraphStyles.append(ps)
+
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('EducationHeader',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=120,
+                                                     space_after=20))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('Cert',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetBold(True)
+    ps = rtf.ParagraphStyle('School',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ps = rtf.ParagraphStyle('EducationDate',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+
+    return s
+
+
+def paths(t):
+  """Depth first list of subtrees with associated element paths.
+
+  :param t: element tree root to index
+  :return: [('foo', <ET tag='foo'>), ('foo:bar', <ET tag='bar'>)]
+  """
+  tp = []
+  paths_r(t, [], tp)
+  return tp
+
+
+def paths_r(t, p, tp):
+  """Recursively build up a depth-first index of an element tree.
+
+  :param t: element tree/subtree to index
+  :param p: current path from root element
+  :param tp: accumulates pairs of of paths and subtrees
+  :return:
+  """
+  p.append(t.tag)
+  tp.append((":".join(p), t))
+  for x in t:
+    paths_r(x, p, tp)
+  del p[-1]
+
+
+def unwrap(t):
+  return re.sub(r'\s+', ' ', t)
+
+
+def main():
+  parser = argparse.ArgumentParser(description='Process some integers.')
+  parser.add_argument('resume', metavar='RESUME', type=str, nargs=1,
+                    help='resume.xml filename')
+  args = parser.parse_args()
+  tree = et.parse(args.resume[0])
+  Resume.render(tree.getroot(), sys.stdout)
+  return 0
+
+
+if __name__ == '__main__':
+  sys.exit(main())
+
