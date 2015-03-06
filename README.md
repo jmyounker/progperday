@@ -14,3 +14,17 @@ to not waste too much time while performing them.
            for graphs.
 
 **20150228** + Lexer for a simple lisp-like calculator language.
+
+**20150301** + Parser for a simple lisp-like calculator language.
+
+**20150302** - Fucked this one up.
+
+**20150303** - LLVM compiler for a simple lisp-like calculator language.
+
+**20150304** - Fucked this one up.
+
+**20150305** - Fucked this one up.
+
+**20150306** - Fibonacci function in LLVM IR.
+
+
