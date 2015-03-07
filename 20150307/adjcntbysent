@@ -1,0 +1,35 @@
+#!/Users/jeff/.virtualenv/ppd-0307/bin/python
+
+"""Number of adjectives per sentence."""
+
+import argparse
+import sys
+
+import nltk
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Interconvert dates and timestamps')
+    parser.add_argument('fn', metavar='FILENAME', type=str, nargs=1,
+                    help='text to read')
+    args = parser.parse_args()
+
+    fn = args.fn[0]
+    with file(fn) as f:
+        text = f.read()
+
+    sents = nltk.sent_tokenize(text)
+    for i, sent in enumerate(sents):
+        words = nltk.word_tokenize(sent)
+        pos = nltk.pos_tag(words)
+        adj = [x[0] for x in pos if x[1] == 'JJ']
+        if len(adj) == 0:
+            print "Sentence %d has no adjectives." % i
+        else:
+            print "Sentence %d has %d adjective(s): %s." % (i, len(adj), ", ".join(adj))
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

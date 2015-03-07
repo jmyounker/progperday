@@ -27,4 +27,6 @@ to not waste too much time while performing them.
 
 **20150306** - Fibonacci function in LLVM IR.
 
+**20150307** - Count adjectives in a text.
+
 
