@@ -1,0 +1,76 @@
+#!/usr/bin/python
+
+import random
+import itertools
+
+gene_size = 10
+low = 0
+high = 1
+pop_size = 10
+
+mut_rate = 20
+die_off = 5
+
+class Genome(object):
+    def __init__(self, gene):
+        self.score = gene_size
+        self.gene = gene
+
+    def set_score(self, t):
+        self.score = score(t, self.gene)
+
+    def __str__(self):
+        return "".join("%s" % x for x in self.gene)
+
+
+def main():
+    t = randGeneSeq()
+    pop = [Genome(randGeneSeq()) for x in range(0, pop_size)]
+    for x in pop:
+        x.set_score(t)
+    pop.sort(key=lambda x: x.score)
+    i = 0
+    while pop[0].score != 0:
+        print "Round %d: scores %s" % (i, ", ".join("%d" % x.score for x in pop))
+        i = i + 1
+        if i % 20 == 0:
+            for j, g in enumerate(pop):
+                print "%s: %s" % (j, g)
+        pop = mutate(pop)
+        pop = breed(pop, t)
+        pop.sort(key=lambda x: x.score)
+    print "took %d cycles to find solution." % i
+
+
+def mutate(pop):
+    for _ in range(0, mut_rate):
+        genome_x = random.randint(0, pop_size-1)
+        gene_y = random.randint(0, gene_size-1)
+        gene = random.randint(low, high)
+        pop[genome_x].gene[gene_y] = gene
+    return pop
+
+def breed(pop, t):
+    pop = pop[0:-die_off]
+    for _ in range(0, die_off):
+        p1 = pop[random.randint(0, min(die_off, len(pop)-1))].gene
+        p2 = pop[random.randint(0, len(pop)-1)].gene
+        child = [x for x in p1]
+        for g in range(0, gene_size):
+            if random.randint(0, 1) == 1:
+                child[g] = p2[g]
+        genome = Genome(child)
+        genome.set_score(t)
+        pop.append(genome)
+    return pop
+
+
+def randGeneSeq():
+    return [random.randint(low, high) for x in range(0, gene_size)]
+
+
+def score(x, y):
+    return sum(1 if e[0] == e[1] else 0 for e in zip(x, y))
+
+if __name__ == '__main__':
+    main()

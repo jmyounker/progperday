@@ -29,4 +29,6 @@ to not waste too much time while performing them.
 
 **20150307** - Count adjectives in a text.
 
+**20150308** - Simple genetic algorithm.
+
 
