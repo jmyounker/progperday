@@ -31,4 +31,7 @@ to not waste too much time while performing them.
 
 **20150308** - Simple genetic algorithm.
 
+**20150309** - I am so tired.  I am **so** phoning it in today.
+
+
 
