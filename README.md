@@ -31,7 +31,10 @@ to not waste too much time while performing them.
 
 **20150308** - Simple genetic algorithm.
 
-**20150309** - I am so tired.  I am **so** phoning it in today.
+**20150309** - I am so tired.  I am **so** phoning it in today with a random exchange sort.
+
+**20150310** - A python implementation of the infamous sleep sort.
+
 
 
 
