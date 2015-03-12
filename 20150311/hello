@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+"""Explains my failure today."""
+
+import sys
+
+
+def main():
+    print >> sys.stderr, "Someday I'll learn to start earlier, but I was having fun and eating chicken."
+
+if __name__ == '__main__':
+    sys.exit(main())

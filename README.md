@@ -35,6 +35,7 @@ to not waste too much time while performing them.
 
 **20150310** - A python implementation of the infamous sleep sort.
 
+**20150311** - Futile evening hacking on something that's not done yet. Prog explains failure.
 
 
 
