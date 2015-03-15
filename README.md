@@ -39,3 +39,7 @@ to not waste too much time while performing them.
 
 **20150312** - Dijkstra's shortest path algorithm. (Crappy implementation.)
 
+**20150313** - Completely blew this day.
+
+**20150314** - An abbreviated hunt-the wumpus.
+
