@@ -41,5 +41,10 @@ to not waste too much time while performing them.
 
 **20150313** - Completely blew this day.
 
-**20150314** - An abbreviated hunt-the wumpus.
+**20150314** - An abbreviated "hunt the wumpus."
+
+**20150315** - "Hunt the wumpus" with superbats.
+
+
+
 
