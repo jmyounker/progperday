@@ -45,6 +45,7 @@ to not waste too much time while performing them.
 
 **20150315** - "Hunt the wumpus" with superbats.
 
+**20150316** - Partition a set of directed graphs.
 
 
 
