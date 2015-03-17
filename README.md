@@ -47,5 +47,38 @@ to not waste too much time while performing them.
 
 **20150316** - Partition a set of directed graphs.
 
+**20150317** - Partition a set of undirected graphs.
 
 
+## Ideas
+* genetic algorithm for sorting
+* intellij basic plugin
+* intellij plugin with a lexer for my silly language
+* intellij plugin with a parser for my silly language
+* add functions to silly language
+* add functions to parser for silly language
+* breadth-first graph search
+* depth-first graph search
+* ios app (hello world or a little more)
+* ios app that responds to gyroscope
+* ios app that signals others over wifi network
+* read chart from wikipedia
+* collect info from multiple program runs and create CSV
+* show CSV data using javascript
+* create osx server process
+* play sound on osx
+* create osx server process that plays sounds when message received
+* create osx server process that alters continuous sounds when message received
+* knapsack problem
+* hashtable from scratch
+* display graph from python
+* perform actions based on sentence
+* interface with libreadline
+* haskell monads?
+* quicksort in prolog
+* osx draw landscape in form
+* osx read keypresses
+* osx make lunar module steerable
+* make lunar lander game
+* tic-tac-toe
+* A* algorithm
