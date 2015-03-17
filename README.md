@@ -47,7 +47,7 @@ to not waste too much time while performing them.
 
 **20150316** - Partition a set of directed graphs.
 
-**20150317** - Partition a set of undirected graphs.
+**20150317** - Partition a set of undirected graphs. (Much simpler than 20150316.)
 
 
 ## Ideas
