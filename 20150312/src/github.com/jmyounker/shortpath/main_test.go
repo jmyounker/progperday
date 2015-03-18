@@ -26,9 +26,9 @@ func TestGraphEdges(t *testing.T) {
 }
 
 func TestInitAndPop(t *testing.T) {
-	p1 := &pathCost{1, 1, 0}
-	p2 := &pathCost{2, 2, 1}
-	p3 := &pathCost{3, 3, 2}
+	p1 := &pathCost{1, 1, math.MaxInt32, 0}
+	p2 := &pathCost{2, 2, math.MaxInt32, 1}
+	p3 := &pathCost{3, 3, math.MaxInt32, 2}
 
 	ch := &costHeap{p3, p1, p2}
 	heap.Init(ch)
@@ -47,8 +47,8 @@ func TestPushAndPop(t *testing.T) {
 	ch := &costHeap{}
 	heap.Init(ch)
 
-	p1 := &pathCost{1, 1, 0}
-	p2 := &pathCost{2, 2, 0}
+	p1 := &pathCost{1, 1, math.MaxInt32, 0}
+	p2 := &pathCost{2, 2, math.MaxInt32, 0}
 	heap.Push(ch, p1)
 	heap.Push(ch, p2)
 
@@ -60,11 +60,10 @@ func TestPushAndPop(t *testing.T) {
 	assertEquals(t, p2, e2)
 }
 
-
 func TestInterfacePush(t *testing.T) {
 	ch := &costHeap{}
-	p1 := &pathCost{1, 1, 0}
-	p2 := &pathCost{2, 2, 0}
+	p1 := &pathCost{1, 1, math.MaxInt32, 0}
+	p2 := &pathCost{2, 2, math.MaxInt32, 0}
 
 	ch.Push(p1)
 	ch.Push(p2)
@@ -73,8 +72,8 @@ func TestInterfacePush(t *testing.T) {
 }
 
 func TestInterfacePop(t *testing.T) {
-	p1 := &pathCost{1, 1, 0}
-	p2 := &pathCost{2, 2, 0}
+	p1 := &pathCost{1, 1, math.MaxInt32, 0}
+	p2 := &pathCost{2, 2, math.MaxInt32, 0}
 	ch := &costHeap{p1, p2}
 
 	e2 := ch.Pop()
@@ -87,7 +86,7 @@ func TestInterfacePop(t *testing.T) {
 
 func TestPushAndPopOneItem(t *testing.T) {
 	ch := &costHeap{}
-	p1 := &pathCost{1, 3, 0}
+	p1 := &pathCost{1, 3, math.MaxInt32, 0}
 
 	heap.Push(ch, p1)
 	e1 := heap.Pop(ch)
@@ -123,7 +122,7 @@ func TestGraphMinimalConnectedNoPath(t *testing.T) {
 	g.addEdge(1, 2, 1)
 
 	path, cost := shortestPath(g, 2, 1)
-	assertEquals(t, []int{2}, path)
+	assertEquals(t, []int{1}, path)
 	assertEquals(t, math.MaxInt32, cost)
 }
 
@@ -158,4 +157,16 @@ func TestGraphTraaversalWithMultiplePaths(t *testing.T) {
 	path, cost := shortestPath(g, 1, 4)
 	assertEquals(t, []int{1, 2, 3, 4}, path)
 	assertEquals(t, 6, cost)
+}
+
+func TestGraphTraaversalWithTrickyPaths(t *testing.T) {
+	g := mapDGraph{}
+	g.addEdge(1, 2, 1)
+	g.addEdge(2, 4, 17)
+	g.addEdge(1, 3, 16)
+	g.addEdge(3, 4, 1)
+
+	path, cost := shortestPath(g, 1, 4)
+	assertEquals(t, []int{1, 3, 4}, path)
+	assertEquals(t, 17, cost)
 }

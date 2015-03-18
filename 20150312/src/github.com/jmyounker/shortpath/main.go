@@ -51,7 +51,7 @@ func main() {
 type edge struct {
 	start int
 	end int
-	weight int
+	cost int
 }
 
 // mapDGraph is a directed graph indexed by edge
@@ -67,8 +67,8 @@ type dGraph interface {
 }
 
 
-func (g mapDGraph) addEdge(start, end, weight int) {
-	e := edge{start, end, weight}
+func (g mapDGraph) addEdge(start, end, cost int) {
+	e := edge{start, end, cost}
 
 	_, ok := g[start]
 	if !ok {
@@ -160,7 +160,7 @@ func readDataFrom(f io.Reader) (dGraph, error) {
 		}
 
 		if w < 0 {
-			return nil, fmt.Errorf("weights must be greater than zero")
+			return nil, fmt.Errorf("costs must be greater than zero")
 		}
 
 		if (sl.Scan()) {
@@ -174,57 +174,59 @@ func readDataFrom(f io.Reader) (dGraph, error) {
 
 
 func shortestPath(g dGraph, start, end int) ([]int, int) {
-	// Allows us to locate all remaining nodes in the heap
-	rem := map[int]*pathCost{}
-
-	// Edges with lowest cost
+	// Index to all the path costs.
+	pci := map[int]*pathCost{}
 	eh := &costHeap{}
 
 	for _, n := range g.nodes() {
-		pe := &pathCost{n, math.MaxInt32, 0}
-		rem[n] = pe
+		if n == math.MaxInt32 {
+			panic("used a node with the same value as the sentinel")
+		}
+		pe := &pathCost{n, math.MaxInt32, math.MaxInt32, 0}
+		pci[n] = pe
 		*eh = append(*eh, pe)
 	}
 
-	path := []int{}
-	cost := 0
-	rem[start].cost = cost
+	pci[start].cost = 0
 	heap.Init(eh)
 
-	for {
-		cn := heap.Pop(eh).(*pathCost)
-		cost = cn.cost
-		// no remaining path found
-		if cn.cost == math.MaxInt32 {
-			break
-		}
-
-		path = append(path, cn.node)
-		delete(rem, cn.node)
-
-		// reached end node
-		if cn.node == end {
-			break
-		}
-
-		// update costs to each edge
-		for _, e := range g.edges(cn.node) {
-			pc, ok := rem[e.end]
-			if ok {
-//				fmt.Printf("NODE: %#v; %d\n", cn, pc.cost)
-				pc.cost = cn.cost + e.weight
-				heap.Fix(eh, pc.index)
+	// Calculate the lowest cost to each node and that nodes predecessor.
+	for eh.Len() != 0 {
+		pn := heap.Pop(eh).(*pathCost)
+		for _, e := range g.edges(pn.node) {
+			c := pn.cost + e.cost
+			en := pci[e.end]
+			if c < en.cost {
+				en.cost = c
+				en.prev = pn.node
+				heap.Fix(eh, en.index)
 			}
 		}
+	}
+
+	// Record the path from the end node back to the start.
+	pn := pci[end]
+	cost := pn.cost
+	path_rev := []int{pn.node}
+	for pn.prev != math.MaxInt32 {
+		pn = pci[pn.prev]
+		path_rev = append(path_rev, pn.node)
+	}
+
+	// Reverse that so we have the path from the start to the end.
+	path := []int{}
+	for i := len(path_rev)-1; i >= 0; i-- {
+		path = append(path, path_rev[i])
 	}
 
 	return path, cost
 }
 
 type pathCost struct {
-	node int
-	cost int
-	index int
+	node int // node number
+	cost int // cost
+	prev int // previous node producing this cost
+	index int // location in heap store
 }
 
 type costHeap []*pathCost
