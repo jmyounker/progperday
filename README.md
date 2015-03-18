@@ -49,6 +49,8 @@ to not waste too much time while performing them.
 
 **20150317** - Partition a set of undirected graphs. (Much simpler than 20150316.)
 
+**20150318** - readline.
+
 
 ## Ideas
 * genetic algorithm for sorting
@@ -82,3 +84,14 @@ to not waste too much time while performing them.
 * make lunar lander game
 * tic-tac-toe
 * A* algorithm
+* translate an if-then-else parse tree into LLVM IR
+* translate a case statement parse tree into LLVM IR
+* translate an infinite loop into LLVM IR
+* translate a break statement into LLVM IR
+* translate a continue statement into LLVM IR
+* translate a while loop PT into LLVM IR
+* translate a for-while loop parse tree into LLVM IR
+* translate a function definition into LLVM IR
+* translate an anonymous function definition into LLVM IR
+* translate a closure into LLVM IR
+
