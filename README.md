@@ -51,9 +51,10 @@ to not waste too much time while performing them.
 
 **20150318** - Simple use of readline function.
 
+**20150319** - Another stupid sort using a genetic algorithm.
+
 
 ## Ideas
-* genetic algorithm for sorting
 * intellij basic plugin
 * intellij plugin with a lexer for my silly language
 * intellij plugin with a parser for my silly language

@@ -1,0 +1,103 @@
+#!/usr/bin/python
+
+import random
+import itertools
+
+seq_size = 10
+seq_end = range(0, seq_size)
+seq_start = random.sample(seq_end, seq_size)
+
+gene_size = seq_size + 3
+
+low = 0
+high = 1
+pop_size = 100
+
+mut_rate = 10
+die_off = 10
+
+class Exc(object):
+    def __init__(self, x1, x2):
+        self.x1 = x1
+        self.x2 = x2
+
+    @classmethod
+    def random(cls):
+        return Exc(random.randint(0, seq_size-1), random.randint(0, seq_size-1))
+
+    def __str__(self):
+        return "(%d, %d)" % (self.x1, self.x2)
+
+
+class Genome(object):
+    def __init__(self, gene):
+        self.score = gene_size
+        self.gene = gene
+
+    def set_score(self):
+        seq = evaluate(self.gene, seq_start)
+        self.score = score(seq_end, seq)
+
+    def __str__(self):
+        return ".".join("%s" % x for x in self.gene)
+
+
+def main():
+    pop = [Genome(random_gene_seq()) for x in range(0, pop_size)]
+    for x in pop:
+        x.set_score()
+    pop.sort(key=lambda x: x.score)
+    i = 0
+    while pop[0].score > 0:
+
+        i = i + 1
+        if i % 10000 == 0:
+            print "round %d: scores %s, ..." % (i, ", ".join("%d" % x.score for x in pop[0:12]))
+        pop = mutate(pop)
+        pop = breed(pop)
+        pop.sort(key=lambda x: x.score)
+    print "took %d cycles to find solution." % i
+    print "start seq: %s" % ", ".join("%s" % x for x in seq_start)
+    print "the winner is: %s" % pop[20]
+
+
+def mutate(pop):
+    for _ in range(0, mut_rate):
+        genome_x = random.randint(0, pop_size-1)
+        gene_y = random.randint(0, gene_size-1)
+        gene = Exc.random()
+        pop[genome_x].gene[gene_y] = gene
+    return pop
+
+
+def breed(pop):
+    pop = pop[0:-die_off]
+    for _ in range(0, die_off):
+        p1 = pop[random.randint(0, min(die_off, len(pop)-1))].gene
+        p2 = pop[random.randint(0, len(pop)-1)].gene
+        child = [x for x in p1]
+        for g in range(0, gene_size):
+            if random.randint(0, 1) == 1:
+                child[g] = p2[g]
+        genome = Genome(child)
+        genome.set_score()
+        pop.append(genome)
+    return pop
+
+
+def evaluate(genome, seq):
+    sort_seq = [x for x in seq]
+    for exc in genome:
+        sort_seq[exc.x1], sort_seq[exc.x2] = sort_seq[exc.x2], sort_seq[exc.x1]
+    return sort_seq
+
+
+def random_gene_seq():
+    return [Exc.random() for x in range(0, gene_size)]
+
+
+def score(x, y):
+    return sum(0 if e[0] == e[1] else 1 for e in zip(x, y))
+
+if __name__ == '__main__':
+    main()
