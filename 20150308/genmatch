@@ -30,7 +30,7 @@ def main():
         x.set_score(t)
     pop.sort(key=lambda x: x.score)
     i = 0
-    while pop[0].score != 0:
+    while pop[0].score > 0:
         print "Round %d: scores %s" % (i, ", ".join("%d" % x.score for x in pop))
         i = i + 1
         if i % 20 == 0:
