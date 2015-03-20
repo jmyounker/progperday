@@ -53,6 +53,8 @@ to not waste too much time while performing them.
 
 **20150319** - Another stupid sort using a genetic algorithm.
 
+**20150320** - It's my birthday.  I basically wrote hello world in Haskell.  Now I'm going dancing.
+
 
 ## Ideas
 * intellij basic plugin
@@ -79,7 +81,7 @@ to not waste too much time while performing them.
 * interface with libreadline
 * haskell monads?
 * quicksort in prolog
-* osx draw landscape in form
+* osx draw landscape in silhouette
 * osx read keypresses
 * osx make lunar module steerable
 * make lunar lander game
