@@ -55,6 +55,8 @@ to not waste too much time while performing them.
 
 **20150320** - It's my birthday.  I basically wrote hello world in Haskell.  Now I'm going dancing.
 
+**20150321** - Breadth-first search of a directed graph.
+
 
 ## Ideas
 * intellij basic plugin
