@@ -57,6 +57,8 @@ to not waste too much time while performing them.
 
 **20150321** - Breadth-first search of a directed graph.
 
+**20150322** - Depth-first search of a directed graph.
+
 
 ## Ideas
 * intellij basic plugin
@@ -64,8 +66,6 @@ to not waste too much time while performing them.
 * intellij plugin with a parser for my silly language
 * add functions to silly language
 * add functions to parser for silly language
-* breadth-first graph search
-* depth-first graph search
 * ios app (hello world or a little more)
 * ios app that responds to gyroscope
 * ios app that signals others over wifi network
