@@ -2,9 +2,7 @@
 
 __author__ = 'jeff'
 
-# Using flask because basically all we need is URL routing to
-# interact via JSON.
-from flask import Flask, redirect, url_for
+from flask import Flask
 
 # Endpoints
 # GET - /run/ - all test IDS
