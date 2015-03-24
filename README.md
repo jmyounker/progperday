@@ -59,6 +59,8 @@ to not waste too much time while performing them.
 
 **20150322** - Depth-first search of a directed graph.
 
+**20150323** - Simple flask app.
+
 
 ## Ideas
 * intellij basic plugin
