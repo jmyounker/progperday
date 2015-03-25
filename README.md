@@ -61,6 +61,8 @@ to not waste too much time while performing them.
 
 **20150323** - Simple flask app.
 
+**20150324** - Premutations of a string.
+
 
 ## Ideas
 * intellij basic plugin
