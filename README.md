@@ -65,6 +65,8 @@ to not waste too much time while performing them.
 
 **20150325** - A cruel guessing game.
 
+**20150326** - Count to ten! (I spent all day working on another project.)
+
 
 ## Ideas
 * intellij basic plugin
@@ -86,7 +88,6 @@ to not waste too much time while performing them.
 * hashtable from scratch
 * display graph from python
 * perform actions based on sentence
-* interface with libreadline
 * haskell monads?
 * quicksort in prolog
 * osx draw landscape in silhouette
