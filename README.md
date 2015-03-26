@@ -63,6 +63,8 @@ to not waste too much time while performing them.
 
 **20150324** - Premutations of a string.
 
+**20150325** - A cruel guessing game.
+
 
 ## Ideas
 * intellij basic plugin

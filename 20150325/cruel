@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+"""A cruel, cruel gussing game."""
+
+import argparse
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description='A cruel guessing game.')
+    parser.add_argument('low', metavar='LOW_NUMBER', type=int, nargs=1,
+                        help='smallest number to guess, inclusive')
+    parser.add_argument('high', metavar='HIGH_NUMBER', type=int, nargs=1,
+                        help='largest number to guess, inclusive')
+    args = parser.parse_args()
+
+
+    low = args.low[0]
+    high = args.high[0]
+
+    if high <= low:
+        print >> sys.stderr, "The high number must be bigger than the low number.\n"
+        return 127
+    try:
+        while True:
+            print "Guess a number between %d and %d, inclusive: " % (low, high)
+            line = sys.stdin.readline()[:-1]
+            try:
+                guess = int(line)
+            except ValueError:
+                print "'%s' is not a number.\n" % line
+                continue
+            if guess > high or guess < low:
+                print "%d is outside the range of %d-%d inclusive\n" % (guess, low, high)
+                continue
+            print "WRONG!\n"
+    except KeyboardInterrupt:
+        print "\nYou are a coward.\n"
+
+
+if __name__ == '__main__':
+    sys.exit(main())
