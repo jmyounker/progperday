@@ -67,6 +67,9 @@ to not waste too much time while performing them.
 
 **20150326** - Count to ten! (I spent all day working on another project.)
 
+**20150327** - Calculate a square root.
+
+
 
 ## Ideas
 * intellij basic plugin

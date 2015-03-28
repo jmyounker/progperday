@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+"""Approximate a square root."""
+
+import argparse
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Description.')
+    parser.add_argument('n', metavar='NUMBER', type=int, nargs=1,
+                        help='number to take square root of')
+    args = parser.parse_args()
+    n = args.n[0]
+    x = n/2
+    for i in range(0, 4):
+        print x
+        x = x_next(n, x)
+    print x
+    return 0
+
+def x_next(n, x):
+    return 0.5 * (x * (n / x))
+
+
+if __name__ == '__main__':
+    sys.exit(main())
