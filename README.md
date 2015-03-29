@@ -69,6 +69,7 @@ to not waste too much time while performing them.
 
 **20150327** - Calculate a square root.
 
+**20150328** - Calculate pi the really old way.
 
 
 ## Ideas

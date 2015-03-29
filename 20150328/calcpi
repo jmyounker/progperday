@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+"""Approximate a square root."""
+
+import argparse
+import math
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Calculate pi')
+    parser.add_argument('p', metavar='TERMCOUNT', type=int, nargs=1,
+                        help='number of terms to expand')
+    args = parser.parse_args()
+    p = args.p[0]
+    sgn = -1
+    t1 = 3
+    t2 = 3
+    s = 1
+    for i in range(1, p+1):
+        s = s + sgn * (1.0/(t1 * t2))
+        sgn *= -1
+        t1 += 2
+        t2 *= 3
+    pi = math.sqrt(12) * s
+    print pi
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
