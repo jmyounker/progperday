@@ -71,6 +71,8 @@ to not waste too much time while performing them.
 
 **20150328** - Calculate pi the really old way.
 
+**20150329** - Calculate e the really cool new way.
+
 
 ## Ideas
 * intellij basic plugin

@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+"""Approximate a square root."""
+
+import argparse
+from decimal import Decimal
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Calculate e')
+    parser.add_argument('t', metavar='TERMCOUNT', type=int, nargs=1,
+                        help='number of terms to expand')
+    args = parser.parse_args()
+    t = args.t[0]
+    e = Decimal(0)
+    for i in range(0, t):
+        e = e + (Decimal(2.0) * i + 2) / fac(2 * i + 1)
+    print e
+    return 0
+
+
+def fac(n):
+    f = Decimal(1)
+    for i in range(1, n+1):
+       f *= i 
+    return f
+
+
+if __name__ == '__main__':
+   sys.exit(main())
+
