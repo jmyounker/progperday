@@ -73,6 +73,8 @@ to not waste too much time while performing them.
 
 **20150329** - Calculate e the really cool new way.
 
+**20150330** - OSX objective-C UDP listener.
+
 
 ## Ideas
 * intellij basic plugin
@@ -87,7 +89,6 @@ to not waste too much time while performing them.
 * collect info from multiple program runs and create CSV
 * show CSV data using javascript
 * create osx server process
-* play sound on osx
 * create osx server process that plays sounds when message received
 * create osx server process that alters continuous sounds when message received
 * knapsack problem
