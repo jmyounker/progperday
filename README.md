@@ -75,6 +75,8 @@ to not waste too much time while performing them.
 
 **20150330** - OSX objective-C UDP listener.
 
+**20150331** - Quicksort in Prolog.
+
 
 ## Ideas
 * intellij basic plugin
@@ -96,7 +98,6 @@ to not waste too much time while performing them.
 * display graph from python
 * perform actions based on sentence
 * haskell monads?
-* quicksort in prolog
 * osx draw landscape in silhouette
 * osx read keypresses
 * osx make lunar module steerable
