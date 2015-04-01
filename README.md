@@ -77,6 +77,8 @@ to not waste too much time while performing them.
 
 **20150331** - Quicksort in Prolog.
 
+**20150401** - Tic-tac-toe with a stupid opponent.
+
 
 ## Ideas
 * intellij basic plugin
@@ -102,7 +104,7 @@ to not waste too much time while performing them.
 * osx read keypresses
 * osx make lunar module steerable
 * make lunar lander game
-* tic-tac-toe
+* make a smarter tic-tac-toe
 * A* algorithm
 * translate an if-then-else parse tree into LLVM IR
 * translate a case statement parse tree into LLVM IR
