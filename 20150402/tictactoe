@@ -1,0 +1,142 @@
+#!/usr/bin/env python
+
+"""Play tic-tac-toe."""
+
+import argparse
+import random
+import re
+import sys
+
+
+wins = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [6, 4, 2],
+    ]
+
+EMPTY = ' '
+
+def main():
+    parser = argparse.ArgumentParser(description='Play tic-tac-toe.')
+    parser.add_argument('player', metavar='X-OR-O', type=str, nargs=1,
+                        help='choose player (X or O)')
+    args = parser.parse_args()
+
+    player = args.player[0].upper()
+    if len(player) != 1:
+        return 127
+    if player not in 'XO':
+        return 127
+
+    play_game(player)
+
+
+def play_game(player):
+    board = Board()
+    current_player = 'X'
+    while board.available_moves():
+
+        if player == current_player:
+            print str(board)
+            print ""
+            board.move(current_player, ask_move(board, current_player))
+            print ""
+        else:
+            board.move(current_player, find_best_move(board, current_player))
+
+        win = board.is_win()
+        if win is not None:
+            print str(board)
+            print ""
+            if win == player:
+                print "YOU WIN!"
+            else:
+                print "YOU LOOSE!"
+            return
+
+        current_player = opponent(current_player)
+
+    print str(board)
+    print ""
+    print "Draw."
+
+
+def ask_move(board, player):
+    moves = [x+1 for x in board.available_moves()]
+    while True:
+        print "Player %s, pick a square: " % player,
+        line = sys.stdin.readline()
+        match = re.search(r'^\s*(\d)\s*$', line)
+        if match:
+            move = int(match.group(1))
+            if move in moves:
+                return move - 1
+        print "Not a valid move.\n"
+
+
+def find_best_move(board, player):
+    for m in board.available_moves():
+        b = board.clone()
+        b.move(player, m)
+        if b.is_win():
+            return m
+    for m in board.available_moves():
+        b = board.clone()
+        b.move(opponent(player), m)
+        if b.is_win():
+            return m
+    return random.choice(board.available_moves())
+
+
+def opponent(p):
+    return 'X' if p == 'O' else 'O'
+
+
+class Board(object):
+    def __init__(self, b=None):
+        if b is None:
+            self.b = [EMPTY for x in range(0, 9)]
+        else:
+            self.b = b
+
+    def clone(self):
+        b = Board(list(self.b))
+        return b
+
+    def is_win(self):
+        for w1, w2, w3 in wins:
+            if self.b[w1] == self.b[w2] == self.b[w3]:
+                p = self.b[w1]
+                if p in 'XO':
+                    return p
+        return None
+
+    def available_moves(self):
+        return [i for i in range(0, 9) if self.b[i] == EMPTY]
+
+    def move(self, player, move):
+        if self.b[move] != EMPTY:
+            raise Exception("%d: Bad move!" % move)
+        self.b[move] = player
+
+    def __str__(self):
+        out = """
+1|2|3
+-+-+-
+4|5|6
+-+-+-
+7|8|9
+"""[1:-1]
+        for i, p in enumerate(self.b):
+            out = out if p == EMPTY else out.replace(str(i+1), p)
+
+        return out
+
+
+if __name__ == '__main__':
+    sys.exit(main())

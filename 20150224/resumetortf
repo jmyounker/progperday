@@ -25,9 +25,11 @@ class Resume(object):
     a['resume:address'] = self.address
     a['resume:phone'] = self.phone
     a['resume:email'] = self.email
+
+    a['resume:employment_history'] = self.work_history
     a['resume:employment_history:employer:name'] = self.employer_name
     a['resume:employment_history:employer:position'] = self.job_title
-    a['resume:employment_history:employer:url'] = self.employer_url
+#    a['resume:employment_history:employer:url'] = self.employer_url
     a['resume:employment_history:employer:startdate'] = self.start_employment
     a['resume:employment_history:employer:startdate:month'] = self.employment_month
     a['resume:employment_history:employer:startdate:year'] = self.employment_year
@@ -35,8 +37,12 @@ class Resume(object):
     a['resume:employment_history:employer:enddate:month'] = self.employment_month
     a['resume:employment_history:employer:enddate:year'] = self.employment_year
     a['resume:employment_history:employer:duties:duty'] = self.job_duty
+
+    a['resume:publications'] = self.publications
+
     a['resume:skills'] = self.skills
     a['resume:skills:skill'] = self.skill
+
     a['resume:education'] = self.education
     a['resume:education:stint:location'] = self.school
     a['resume:education:stint:startdate'] = self.start_stint
@@ -73,6 +79,11 @@ class Resume(object):
   def email(self, t):
     self.p(self.ss.ParagraphStyles.Email, t.text)
 
+  # ---
+
+  def work_history(self, t):
+      self.p(self.ss.ParagraphStyles.WorkHistoryHeader, 'Work History')
+
   def employer_name(self, t):
     self.p(self.ss.ParagraphStyles.EmployerName, t.text)
 
@@ -97,11 +108,20 @@ class Resume(object):
   def job_duty(self, t):
     self.p(self.ss.ParagraphStyles.JobDuty, "*", rtf.TAB, unwrap(t.text))
 
+  # ---
+
+  def publications(self, _):
+      self.p(self.ss.ParagraphStyles.PublicationsHeader, 'Publications')
+
+  # ---
+
   def skills(self, _):
     self.p(self.ss.ParagraphStyles.SkillsHeader, 'Skills')
 
   def skill(self, t):
     self.p(self.ss.ParagraphStyles.Skill, "*", rtf.TAB, unwrap(t.text))
+
+  # ---
 
   def education(self, _):
     self.p(self.ss.ParagraphStyles.EducationHeader, 'Education')
@@ -174,6 +194,17 @@ class Resume(object):
                                                      space_after=160))
     s.ParagraphStyles.append(ps)
 
+    # ---
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('WorkHistoryHeader',
+                          ts,
+                          rtf.ParagraphPropertySet(space_before=120,
+                                                   space_after=20))
+    s.ParagraphStyles.append(ps)
+
+
     ts = NormalText.Copy()
     ts.TextPropertySet.SetBold(True)
     ps = rtf.ParagraphStyle('EmployerName',
@@ -187,6 +218,14 @@ class Resume(object):
                             ts,
                             rtf.ParagraphPropertySet(space_before=4,
                                                      space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('WorkHistory',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=120,
+                                                     space_after=20))
     s.ParagraphStyles.append(ps)
 
     ts = NormalText.Copy()
@@ -211,6 +250,35 @@ class Resume(object):
                                                      space_after=4))
     s.ParagraphStyles.append(ps)
 
+    # ---
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('PublicationsHeader',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=120,
+                                                     space_after=20))
+    s.ParagraphStyles.append(ps)
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(12).SetBold(False)
+    ps = rtf.ParagraphStyle('Publications',
+                            ts,
+                            rtf.ParagraphPropertySet(tabs=[tab],
+                                                     space_before=4,
+                                                     space_after=4))
+    s.ParagraphStyles.append(ps)
+
+    # ---
+
+    ts = NormalText.Copy()
+    ts.TextPropertySet.SetSize(14).SetBold(True)
+    ps = rtf.ParagraphStyle('SkillsHeader',
+                            ts,
+                            rtf.ParagraphPropertySet(space_before=120,
+                                                     space_after=20))
+    s.ParagraphStyles.append(ps)
+
     ts = NormalText.Copy()
     ts.TextPropertySet.SetSize(12).SetBold(False)
     ps = rtf.ParagraphStyle('Skill',
@@ -220,13 +288,8 @@ class Resume(object):
                                                      space_after=4))
     s.ParagraphStyles.append(ps)
 
-    ts = NormalText.Copy()
-    ts.TextPropertySet.SetSize(14).SetBold(True)
-    ps = rtf.ParagraphStyle('SkillsHeader',
-                            ts,
-                            rtf.ParagraphPropertySet(space_before=120,
-                                                     space_after=20))
-    s.ParagraphStyles.append(ps)
+
+    # ---
 
     ts.TextPropertySet.SetSize(14).SetBold(True)
     ps = rtf.ParagraphStyle('EducationHeader',

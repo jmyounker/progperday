@@ -10,6 +10,7 @@ def main():
   for p in permute(s):
     print p
 
+
 def permute(s):
   if len(s) == 1:
     yield s

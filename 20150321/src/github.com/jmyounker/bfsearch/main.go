@@ -17,7 +17,7 @@ func main() {
 	g.addEdge(3, 0)
 	g.addEdge(4, 6)
 
-	breadthFirst(g, 0);
+	breadthFirst(g, 0)
 }
 
 

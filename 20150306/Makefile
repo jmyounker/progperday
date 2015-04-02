@@ -14,7 +14,6 @@ fib.s: fib.bc
 fib.bc: fib.ll
 	/usr/local/Cellar/llvm/3.5.1/bin/llvm-as fib.ll -o fib.bc
 
-
 # tmpl is a tet program used to generate assembly skeleton & verify
 # the build process
 tmpl: tmpl.s

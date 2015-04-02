@@ -1,0 +1,11 @@
+/* -*-  Prolog -*- */
+
+
+part([], P, L, H)
+
+part([X|XR], P, [X|LR], H) :-
+	P < X, part(XR, P, LR, H).
+
+part([X|XR], P, L, [H|HR] :-
+	P >= X, part(XR, P, L, HR).
+
