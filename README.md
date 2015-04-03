@@ -41,9 +41,9 @@ to not waste too much time while performing them.
 
 **20150313** - Completely blew this day.
 
-**20150314** - An abbreviated "hunt the wumpus."
+**20150314** - An abbreviated "Hunt the Wumpus."
 
-**20150315** - "Hunt the wumpus" with superbats.
+**20150315** - "Hunt the Wumpus" with superbats.
 
 **20150316** - Partition a set of directed graphs.
 
@@ -80,6 +80,8 @@ to not waste too much time while performing them.
 **20150401** - Tic-tac-toe with a stupid opponent.
 
 **20150402** - Play sound file from Objective-C on OSX.
+
+**20150403** - Dijkstra's shortest path first algorithm for potentially infinite graphs.
 
 
 ## Ideas
