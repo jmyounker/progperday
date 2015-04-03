@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1FFF2C7E1ACDC9C90018CC53 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFF2C7D1ACDC9C90018CC53 /* main.m */; };
+		1FFF2C851ACDD4F80018CC53 /* AudioPlayback.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFF2C841ACDD4F80018CC53 /* AudioPlayback.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		1FFF2C7A1ACDC9C90018CC53 /* audemio */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = audemio; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FFF2C7D1ACDC9C90018CC53 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1FFF2C841ACDD4F80018CC53 /* AudioPlayback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioPlayback.m; sourceTree = "<group>"; };
+		1FFF2C861ACDD5070018CC53 /* AudioPlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioPlayback.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				1FFF2C7D1ACDC9C90018CC53 /* main.m */,
+				1FFF2C841ACDD4F80018CC53 /* AudioPlayback.m */,
+				1FFF2C861ACDD5070018CC53 /* AudioPlayback.h */,
 			);
 			path = audemio;
 			sourceTree = "<group>";
@@ -119,6 +124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FFF2C7E1ACDC9C90018CC53 /* main.m in Sources */,
+				1FFF2C851ACDD4F80018CC53 /* AudioPlayback.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

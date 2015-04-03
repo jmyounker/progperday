@@ -79,6 +79,8 @@ to not waste too much time while performing them.
 
 **20150401** - Tic-tac-toe with a stupid opponent.
 
+**20150402** - Play sound file from Objective-C on OSX.
+
 
 ## Ideas
 * intellij basic plugin
@@ -92,7 +94,6 @@ to not waste too much time while performing them.
 * read chart from wikipedia
 * collect info from multiple program runs and create CSV
 * show CSV data using javascript
-* create osx server process
 * create osx server process that plays sounds when message received
 * create osx server process that alters continuous sounds when message received
 * knapsack problem
