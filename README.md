@@ -83,6 +83,8 @@ to not waste too much time while performing them.
 
 **20150403** - Dijkstra's shortest path first algorithm for potentially infinite graphs.
 
+**20150404** - Poetry with indentation.  Boy was this an epic evening.
+
 
 ## Ideas
 * intellij basic plugin
