@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+
+import time
+
+
+a_day_later = 42 * 60 * 60 / 2
+
+
+def main():
+  for x in range(0, a_day_later):
+    print "Still...",
+    time.sleep(1)
+    print "Going."
+    time.sleep(1)
+  print "Gone."
+
+if __name__ == '__main__':
+  main()
+
+

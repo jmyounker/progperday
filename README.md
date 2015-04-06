@@ -85,6 +85,8 @@ to not waste too much time while performing them.
 
 **20150404** - Poetry with indentation.  Boy was this an epic evening.
 
+**20150405** - Silly endurance measure.  More or less matching my day.
+
 
 ## Ideas
 * intellij basic plugin
