@@ -87,6 +87,8 @@ to not waste too much time while performing them.
 
 **20150405** - Silly endurance measure.  More or less matching my day.
 
+**29150408** - Brain-dead non-functional javascript pagination.
+
 
 ## Ideas
 * intellij basic plugin
