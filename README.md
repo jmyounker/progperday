@@ -91,6 +91,8 @@ to not waste too much time while performing them.
 
 **20150409** - Calculate pi by tossing pebbles into a circle.
 
+**20150410** - 0/1 Knapsack problem.
+
 
 ## Ideas
 * intellij basic plugin
@@ -106,7 +108,7 @@ to not waste too much time while performing them.
 * show CSV data using javascript
 * create osx server process that plays sounds when message received
 * create osx server process that alters continuous sounds when message received
-* knapsack problem
+* infinite knapsack problem
 * hashtable from scratch
 * display graph from python
 * perform actions based on sentence
