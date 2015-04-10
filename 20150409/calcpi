@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+
+import random
+
+
+def main():
+    r = 1
+    x_range = (-r, r)
+    y_range = (-r, r)
+    area = r*2 * r*2
+    itr = 1000000
+    in_circ = 0
+    for i in range(0, itr):
+        x = random.uniform(*x_range)
+        y = random.uniform(*y_range)
+        if inside(x, y, r):
+            in_circ += 1
+    print float(in_circ)/float(itr) * 4
+
+
+def inside(x, y, r):
+    return x*x + y*y <= r*r
+
+
+if __name__ == '__main__':
+    main()
