@@ -93,6 +93,8 @@ to not waste too much time while performing them.
 
 **20150410** - 0/1 Knapsack problem.
 
+**20150411** - Simple timeline with vis.js.
+
 
 ## Ideas
 * intellij basic plugin
