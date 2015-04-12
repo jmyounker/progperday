@@ -95,6 +95,8 @@ to not waste too much time while performing them.
 
 **20150411** - Simple timeline with vis.js.
 
+**20150412** - Core audio playback plagerised from the audio book chapter 5.
+
 
 ## Ideas
 * intellij basic plugin
