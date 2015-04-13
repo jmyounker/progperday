@@ -95,7 +95,9 @@ to not waste too much time while performing them.
 
 **20150411** - Simple timeline with vis.js.
 
-**20150412** - Core audio playback plagerised from the audio book chapter 5.
+**20150412** - Core audio playback using queues.
+
+**20150413** - Core audio playback using audio units.
 
 
 ## Ideas

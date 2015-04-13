@@ -8,6 +8,11 @@
 	<string>RelativeToDerivedData</string>
 	<key>DerivedDataLocationStyle</key>
 	<string>Default</string>
+<<<<<<< HEAD
+=======
+	<key>HasAskedToTakeAutomaticSnapshotBeforeSignificantChanges</key>
+	<true/>
+>>>>>>> 3d-mixer
 	<key>IssueFilterStyle</key>
 	<string>ShowActiveSchemeOnly</string>
 	<key>LiveSourceIssuesEnabled</key>
