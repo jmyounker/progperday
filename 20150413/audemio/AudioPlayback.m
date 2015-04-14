@@ -20,11 +20,6 @@ typedef struct AudPlayer {
     AudioStreamBasicDescription format; // data format
     AUGraph                     graph; // audio graph that plays events
     AudioUnit                   fileAu; // audio unit that reads from file
-
-    SInt64						packetPosition; // current packet index in output file
-    UInt32						numPacketsToRead; // number of packets to read from file
-    AudioStreamPacketDescription *packetDescs; // array of packet descriptions for read buffer
-    Boolean						isDone; // playback has completed
 } AudPlayer;
 
 @implementation AudioPlayback
@@ -158,7 +153,6 @@ static OSStatus prepareInput(AudPlayer* player) {
     if (res != noErr) {
         return res;
     }
-
     
     UInt64 numPackets;
     UInt32 numPacketsPropSize = sizeof(numPackets);
