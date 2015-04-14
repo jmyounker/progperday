@@ -14,10 +14,11 @@
 
 #define NUM_FILES  2
 
-@interface AudioPlayback : NSObject {
-}
+@interface AudioPlayback : NSObject
 
-- (OSStatus) playSound: (NSString*) file;
+@property NSArray* sources; // reference to your output file
+
+- (OSStatus) playSound: (NSArray*) files;
 
 @end
 

@@ -15,8 +15,8 @@
 - (id) initWithAudioFile:(NSString*)path busIndex:(UInt32)bus  {
     self = [super init];
     if (self) {
-        self->filePath = path;
-        self->busIndex = bus;
+        self.filePath = path;
+        self.busIndex = bus;
     }
     return self;
 }
@@ -30,12 +30,13 @@
 }
 
 - (OSStatus) open {
-    NSURL* soundUrl = [NSURL fileURLWithPath:self->filePath];
+    NSURL* soundUrl = [NSURL fileURLWithPath:self.filePath];
     AVURLAsset* audioAsset = [AVURLAsset URLAssetWithURL:soundUrl options:nil];
-    self->duration = CMTimeGetSeconds(audioAsset.duration);
+    self.duration = CMTimeGetSeconds(audioAsset.duration);
     
     OSStatus res = AudioFileOpenURL(CFBridgingRetain(soundUrl), kAudioFileReadPermission, 0, &self->file);
     if (res != noErr) {
+        NSLog(@"error: could not set open file");
         return res;
     }
 
@@ -45,6 +46,7 @@
                                &formatPropSize,
                                &self->format);
     if (res != noErr) {
+        NSLog(@"error: could not set get file properties");
         return res;
     }
     
@@ -56,6 +58,7 @@
                                &self->file,
                                sizeof(self->file));
     if (res != noErr) {
+        NSLog(@"error: could not set file id");
         return res;
     }
     
@@ -86,6 +89,7 @@
                                &region,
                                sizeof(region));
     if (res != noErr) {
+        NSLog(@"error: could not set playback region");
         return res;
     }
     
@@ -101,6 +105,7 @@
                                &startTime,
                                sizeof(startTime));
     if (res != noErr) {
+        NSLog(@"error: could not set start time");
         return res;
     }
     

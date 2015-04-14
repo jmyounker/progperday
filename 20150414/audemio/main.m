@@ -11,15 +11,10 @@
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-//        NSArray* arguments = [[NSProcessInfo processInfo] arguments];
-//        if (arguments.count != 2) {
-//            NSLog(@"expected only one argument");
-//            return 127;
-//        }
-//        NSString* soundFile = arguments[1];
-        NSString* soundFile = @"/Users/jeff/repos/progperday/20150413/audemio/Rana_clamitans.mp3";
+        NSString* frog1 = @"/Users/jeff/repos/progperday/20150414/audemio/Rana_clamitans.mp3";
+        NSString* frog2 = @"/Users/jeff/repos/progperday/20150414/audemio/rana_sylvatica_chorus.aiff";
         AudioPlayback* ap = [[AudioPlayback alloc] init];
-        OSStatus res = [ap playSound: soundFile];
+        OSStatus res = [ap playSound: @[frog1, frog2]];
         if (res != noErr) {
             NSLog(@"Failed!");
         }

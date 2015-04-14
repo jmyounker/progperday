@@ -15,13 +15,14 @@
 #define NUM_FILES  2
 
 @interface Sound : NSObject {
-    NSString* filePath; // input file path
     AudioFileID file; // input file
     AudioStreamBasicDescription format; // data format
     AudioUnit au; // audio unit
-    UInt32 busIndex; // busIndex
-    float duration; // audio length in seconds
 }
+
+@property NSString* filePath; // input file path
+@property UInt32 busIndex; // busIndex
+@property float duration; // audio length in seconds
 
 - (id) initWithAudioFile:(NSString*)path busIndex:(UInt32)bus;
 

@@ -18,22 +18,27 @@
 #define kTotalBuffDrainTime kNumberPlaybackBuffers * kBuffTime
 
 @implementation AudioPlayback {
-    Sound* source; // reference to your output file
     AUGraph graph; // audio graph that plays events
     AudioUnit mixerAu; // audio unit for 3d mixer
 }
 
-- (OSStatus) playSound: (NSString*) file {
-    self->source = [[Sound alloc] initWithAudioFile:file busIndex:0];
-
+- (OSStatus) playSound: (NSArray*) files {
+    NSMutableArray* srcs = [NSMutableArray arrayWithObjects: nil];
+    for (int i=0; i<[files count]; i++) {
+        [srcs addObject: [[Sound alloc] initWithAudioFile:files[i] busIndex:i]];
+    };
+    self.sources = srcs;
+         
     OSStatus res = [self createAuGraph];
     if (res != noErr) {
         return res;
     }
 
-    res = [self->source open];
-    if (res != noErr) {
-        return res;
+    for (Sound* sound in self.sources) {
+        res = [sound open];
+        if (res != noErr) {
+            return res;
+        }
     }
     
     res = AUGraphStart(self->graph);
@@ -41,10 +46,17 @@
         return res;
     }
     NSLog(@"playing sound...");
-    
-    for (Float32 i=0; i<21*4; i++) {
-        setObjectCoordinates(self->mixerAu, 0, 0, i*0.25);
-        usleep(0.25 * 1000.0 * 1000.0);
+
+    // For the hard-coded current values, make Rana clamitans fades into the distance behind/ahead,
+    // while Rana sylvatica swirls from right to left.
+    Float32 interval = 0.25;
+    Float32 intervalCount = 21 / interval;
+    Float32 azm2 = 90;
+    for (Float32 i=0; i<intervalCount; i++) {
+        setObjectCoordinates(self->mixerAu, 0, 0, i*interval/4);
+        setObjectCoordinates(self->mixerAu, 1, azm2, 1);
+        azm2 -= 180.0 / intervalCount;
+        usleep(interval * 1000.0 * 1000.0);
     }
 
     NSLog(@"playback complete...");
@@ -59,12 +71,15 @@ cleanup:
     AUGraphStop(self->graph);
     AUGraphUninitialize(self->graph);
     AUGraphClose(self->graph);
-    [self->source cleanup];
+    for (Sound* sound in self.sources) {
+        [sound cleanup];
+    }
 }
 
 - (OSStatus) createAuGraph {
     OSStatus res = NewAUGraph(&self->graph);
     if (res != noErr) {
+        NSLog(@"error: could not create augraph");
         return res;
     }
 
@@ -77,18 +92,22 @@ cleanup:
     res = AUGraphAddNode(self->graph, &outputCd, &outputNode);
 
     if (res != noErr) {
+        NSLog(@"error: could not add output to augraph");
         return res;
     }
-
-    AudioComponentDescription fileCd = {0};
-    fileCd.componentType = kAudioUnitType_Generator;
-    fileCd.componentSubType = kAudioUnitSubType_AudioFilePlayer;
-    fileCd.componentManufacturer = kAudioUnitManufacturer_Apple;
-
-    AUNode fileNode;
-    res = AUGraphAddNode(self->graph, &fileCd, &fileNode);
-    if (res != noErr) {
-        return res;
+    
+    AUNode soundNodes[[self.sources count]];
+    for (int i=0; i<[self.sources count]; i++) {
+        AudioComponentDescription fileCd = {0};
+        fileCd.componentType = kAudioUnitType_Generator;
+        fileCd.componentSubType = kAudioUnitSubType_AudioFilePlayer;
+        fileCd.componentManufacturer = kAudioUnitManufacturer_Apple;
+    
+        res = AUGraphAddNode(self->graph, &fileCd, &soundNodes[i]);
+        if (res != noErr) {
+            NSLog(@"error: could not add sound to augraph");
+            return res;
+        }
     }
     
     AudioComponentDescription mixerCd = {0};
@@ -101,26 +120,34 @@ cleanup:
     AUNode mixerNode;
     res = AUGraphAddNode(self->graph, &mixerCd, &mixerNode);
     if (res != noErr) {
+        NSLog(@"error: could not add node to augraph");
         return res;
     }
     
     res = AUGraphOpen(self->graph);
     if (res != noErr) {
+        NSLog(@"error: could not open augraph");
         return res;
     }
     
-    res = AUGraphNodeInfo(self->graph, fileNode, NULL, [self->source audioUnit]);
-    if (res != noErr) {
-        return res;
+    for (int i=0; i<[self.sources count]; i++) {
+        Sound* sound = self.sources[i];
+        res = AUGraphNodeInfo(self->graph, soundNodes[i], NULL, [sound audioUnit]);
+        if (res != noErr) {
+            NSLog(@"error: could not get sound audio unit");
+            return res;
+        }
     }
 
     res = AUGraphNodeInfo(self->graph, mixerNode, NULL, &self->mixerAu);
     if (res != noErr) {
+        NSLog(@"error: could not get mixer audio unit");
         return res;
     }
 
     res = setMixerBusCount(self->mixerAu, 64);
     if (res != noErr) {
+        NSLog(@"error: could not set mixer bus count");
         return res;
     }
 
@@ -132,11 +159,15 @@ cleanup:
                                   &reverbSetting,
                                   sizeof(reverbSetting));
     
-    res = AUGraphConnectNodeInput(self->graph, fileNode, 0, mixerNode, 0);
-    if (res != noErr) {
-        return res;
+    for (int i=0; i<[self.sources count]; i++) {
+        Sound* sound = self.sources[i];
+        res = AUGraphConnectNodeInput(self->graph, soundNodes[i], 0, mixerNode, sound.busIndex);
+        if (res != noErr) {
+            NSLog(@"error: could not wire sound into augraph");
+            return res;
+        }
     }
-
+        
     res = AUGraphConnectNodeInput(self->graph, mixerNode, 0, outputNode, 0);
     if (res != noErr) {
         return res;
@@ -144,10 +175,12 @@ cleanup:
     
     res = AUGraphInitialize(self->graph);
     if (res != noErr) {
+        NSLog(@"error: could not initialize augraph");
         return res;
     }
 
     setReverb(self->mixerAu, 0);
+
     return noErr;
 }
 
