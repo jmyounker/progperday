@@ -20,6 +20,7 @@
 @implementation AudioPlayback {
     AUGraph graph; // audio graph that plays events
     AudioUnit mixerAu; // audio unit for 3d mixer
+    AudioUnit outputAu; // audio unit for output
 }
 
 - (OSStatus) playSound: (NSArray*) files {
@@ -145,6 +146,12 @@ cleanup:
         return res;
     }
 
+    res = AUGraphNodeInfo(self->graph, outputNode, NULL, &self->outputAu);
+    if (res != noErr) {
+        NSLog(@"error: could not get output audio unit");
+        return res;
+    }
+
     res = setMixerBusCount(self->mixerAu, 64);
     if (res != noErr) {
         NSLog(@"error: could not set mixer bus count");
@@ -167,7 +174,9 @@ cleanup:
             return res;
         }
     }
-        
+
+    configureGraphForChannelLayout(self->mixerAu, self->outputAu);
+    
     res = AUGraphConnectNodeInput(self->graph, mixerNode, 0, outputNode, 0);
     if (res != noErr) {
         return res;

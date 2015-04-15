@@ -24,5 +24,6 @@ OSStatus setMixerBusCount(AudioUnit mixer, UInt32 inBusCount);
 OSStatus setReverb(AudioUnit mixer, UInt32 busIndex);
 OSStatus setObjectCoordinates(AudioUnit mixer, UInt32 mixerBus, Float32 inAzimuth,
                               Float32 inDistance);
+OSStatus configureGraphForChannelLayout(AudioUnit mixer, AudioUnit output);
 
 #endif
