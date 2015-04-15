@@ -99,6 +99,8 @@ to not waste too much time while performing them.
 
 **20150413** - Core audio playback using audio units.
 
+**20150414** - Core audio playback with 3D mixer.
+
 
 ## Ideas
 * intellij basic plugin
