@@ -101,6 +101,7 @@ to not waste too much time while performing them.
 
 **20150414** - Core audio playback with 3D mixer.
 
+**20150415** - Core audio playback with 3D mixer in swift.
 
 ## Ideas
 * intellij basic plugin
