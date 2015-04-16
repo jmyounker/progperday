@@ -103,6 +103,9 @@ to not waste too much time while performing them.
 
 **20150415** - Core audio playback with 3D mixer in swift.
 
+**20150416** - Calculate e**x.
+
+
 ## Ideas
 * intellij basic plugin
 * intellij plugin with a lexer for my silly language
