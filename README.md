@@ -105,6 +105,8 @@ to not waste too much time while performing them.
 
 **20150416** - Calculate e**x.
 
+**20150417** - Three buckets, one tips into the other, flowing in a circle.
+
 
 ## Ideas
 * intellij basic plugin

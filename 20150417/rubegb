@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+
+"""A rube goldbergesque device."""
+
+
+import time
+
+
+class Bin(object):
+  def __init__(self):
+    self.tipped = False
+    self.new_tipped = False
+    self.vol = 10
+    self.fill = 0
+    self.new_fill = 0
+    self.next = None
+
+  def update(self):
+    self.tipped = self.new_tipped
+    self.fill = self.new_fill
+
+  def __str__(self):
+    return "(%s, %d)" % ("tipped" if self.tipped else "-", self.fill)
+
+
+def main():
+   bins = [Bin() for x in range(0, 3)]
+   for i in range(0, len(bins)-1):
+     bins[i].next = bins[i+1]
+   bins[-1].next = bins[0]
+
+   bins[0].new_fill = 10
+   bins[0].update()
+
+   while True:
+     for bin in bins:
+       if bin.tipped and bin.fill == 0:
+         bin.new_tipped = False
+       if not bin.tipped and bin.fill == bin.vol:
+         bin.new_tipped = True
+       if bin.tipped and bin.fill > 0:
+         bin.new_fill = bin.fill - 1
+         bin.next.new_fill = bin.next.new_fill + 1
+
+     for bin in bins:
+       bin.update()
+
+     print ", ".join(str(x) for x in bins)
+
+     time.sleep(1)
+     
+
+if __name__ == '__main__':
+  main()
+ 
