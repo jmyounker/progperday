@@ -107,7 +107,10 @@ to not waste too much time while performing them.
 
 **20150417** - Three buckets, one tips into the other, flowing in a circle.
 
-**20150418** - Three buckets, one tips into the other, flowing in a circle.
+**20150418** - Singing 'Duke of Earl' very badly.
+
+**20150419** - Hello world from a subprocess.
+
 
 
 ## Ideas
