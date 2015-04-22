@@ -109,8 +109,11 @@ to not waste too much time while performing them.
 
 **20150418** - Singing 'Duke of Earl' very badly.
 
-**20150419** - Hello world from a subprocess.
+**20150419** - Saying hello world from a subprocess in go.
 
+**20150420** - 
+
+**20150421** - Approximate Catalan's number.
 
 
 ## Ideas
