@@ -115,11 +115,13 @@ to not waste too much time while performing them.
 
 **20150421** - Approximate Catalan's number.
 
-**20150421** - Approximate Catalan's number to a much higher precision.
+**20150422** - Approximate Catalan's number to a much higher precision.
+
+**20150423** - "Hello World" for an IntelliJ plugin.
+
 
 
 ## Ideas
-* intellij basic plugin
 * intellij plugin with a lexer for my silly language
 * intellij plugin with a parser for my silly language
 * add functions to silly language
