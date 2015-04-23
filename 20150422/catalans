@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+"""Calculate catalan's constant"""
+
+import argparse
+from decimal import Decimal
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Calculate Catalan's constant to n terms.")
+    parser.add_argument('n', metavar='NUM_TERMS', type=int, nargs=1,
+                        help='Number of terms in approximation')
+    args = parser.parse_args()
+
+    n = args.n[0]
+    if n < 1:
+	print >> sys.stderr, "NUM_TERMS must be at least 1"
+	sys.exit(-127)
+
+    def Dec(na):
+      return [Decimal(x) for x in na]
+    at = Dec([2,  3,  5,  6,  7, 1])
+    n1 = Dec([-1, 1, -1,  1, -1, 1])
+    n2 = Dec([ 1, 1, -1, -1, -1, 1])
+    e1 = Dec([ 1, 2,  3,  3,  4, 1])
+    e2 = Dec([ 4, 6,  9, 10, 12, 3])
+    ne1 = [Decimal(2)**i for i in e1]
+    ne2 = [Decimal(2)**i for i in e2]
+    s = Decimal(0)
+    for ii in range(0, n):
+      i = Decimal(ii)
+      mt = [Decimal(8)*i + x for x in at]
+      t1 = [n/(e*m*m) for n, e, m in zip(n1, ne1, mt)]
+      t2 = [n/(e*m*m) for n, e, m in zip(n2, ne2, mt)]
+
+      s1 = (Decimal(3)/Decimal(2)**(Decimal(4)*i)) * sum(t1)
+      s2 = (Decimal(2)/Decimal(2)**(Decimal(12)*i)) * sum(t2)
+      s += s1 - s2
+    print s
+
+
+if __name__ == '__main__':
+    sys.exit(main())

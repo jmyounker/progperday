@@ -115,6 +115,8 @@ to not waste too much time while performing them.
 
 **20150421** - Approximate Catalan's number.
 
+**20150421** - Approximate Catalan's number to a much higher precision.
+
 
 ## Ideas
 * intellij basic plugin
