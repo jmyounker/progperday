@@ -111,7 +111,7 @@ to not waste too much time while performing them.
 
 **20150419** - Saying hello world from a subprocess in go.
 
-**20150420** - 
+**20150420** - A library making it easy to do shell-like things from go.
 
 **20150421** - Approximate Catalan's number.
 
