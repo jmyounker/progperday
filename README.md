@@ -119,6 +119,8 @@ to not waste too much time while performing them.
 
 **20150423** - "Hello World" for an IntelliJ plugin.
 
+**20150424** - Floyd-Warshall algorithm for finding shortest paths in a graph.
+
 
 
 ## Ideas
