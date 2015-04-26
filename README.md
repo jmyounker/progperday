@@ -123,6 +123,8 @@ to not waste too much time while performing them.
 
 **20150425** - Phoning it in because I had an awesome evening!
 
+**20150426** - Binary multiplication.
+
 
 ## Ideas
 * intellij plugin with a lexer for my silly language
