@@ -121,6 +121,7 @@ to not waste too much time while performing them.
 
 **20150424** - Floyd-Warshall algorithm for finding shortest paths in a graph.
 
+**20150425** - Phoning it in because I had an awesome evening!
 
 
 ## Ideas

@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+
+def main():
+  m = ['You', 'can', 'read', 'what', 'I', 'am', 'writing', 'tonight']
+  print ' '.join(m) + '.'
+
+
+if __name__ == '__main__':
+  main()
+
