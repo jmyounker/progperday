@@ -1,0 +1,4 @@
+*.class
+*.jar
+intellij-community/
+gen/

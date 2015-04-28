@@ -1,0 +1,45 @@
+<idea-plugin version="2">
+  <id>com.simpplugin</id>
+  <name>Plugin display name here</name>
+  <version>1.0</version>
+  <vendor email="support@theblobshop.com" url="http://www.theblobshop.com">The Blobshop</vendor>
+
+  <description><![CDATA[
+      Trival language.<br>
+    ]]>
+  </description>
+
+  <change-notes><![CDATA[
+      First version.<br>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="131"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+      <fileTypeFactory implementation="com.simpplugin.SimpFileTypeFactory"/>
+      <lang.parserDefinition language="Simp" implementationClass="com.simpplugin.SimpParserDefinition"/>
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+      <component>
+          <implementation-class>com.simpplugin.Simp</implementation-class>
+      </component>
+  </project-components>
+
+  <actions>
+  </actions>
+
+</idea-plugin>

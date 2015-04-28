@@ -125,10 +125,10 @@ to not waste too much time while performing them.
 
 **20150426** - Binary multiplication.
 
+**20150427** - IntelliJ plugin with lexer and parser for the silly little language.
+
 
 ## Ideas
-* intellij plugin with a lexer for my silly language
-* intellij plugin with a parser for my silly language
 * add functions to silly language
 * add functions to parser for silly language
 * ios app (hello world or a little more)
