@@ -1,0 +1,25 @@
+
+{
+  parserClass="com.simpplugin.parser.SimpParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Simp"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.simpplugin.psi"
+  psiImplPackage="com.simpplugin.psi.impl"
+
+  elementTypeHolderClass="com.simpplugin.psi.SimpType"
+  elementTypeClass="com.simpplugin.psi.SimpElementType"
+  tokenTypeClass="com.simpplugin.psi.SimpTokenType"
+}
+
+simpFile ::= CRLF* expr CRLF*
+
+// private item_ ::= (expr|CRLF)
+
+expr ::= (expr1|expr2|NUM)
+
+expr1 ::= OPEN_PAREN OPERATOR expr CLOSE_PAREN
+
+expr2 ::= OPEN_PAREN OPERATOR expr expr CLOSE_PAREN
