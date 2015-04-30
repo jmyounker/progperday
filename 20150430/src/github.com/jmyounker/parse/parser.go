@@ -11,11 +11,17 @@ import (
 
 type astExpr struct {
 	numLit *astNumLit
+	variable *astVariable
 	unaryOpExpr *astUnaryOpExpr
 	binOpExpr *astBinOpExpr
+	letExpr *astLetExpr
 }
 
 type astNumLit struct {
+	value string
+}
+
+type astVariable struct {
 	value string
 }
 
@@ -29,10 +35,24 @@ type astBinOpExpr struct {
 	arg2 *astExpr
 }
 
-func newNumLitExpr(num string) *astExpr {
+type astLetExpr struct {
+	varName string
+	varInitExpr *astExpr
+	body *astExpr
+}
+
+func newNumLitExpr(x string) *astExpr {
 	return &astExpr{
 		numLit: &astNumLit {
-			value: num,
+			value: x,
+		},
+	}
+}
+
+func newVariable(x string) *astExpr {
+	return &astExpr{
+		variable: &astVariable {
+			value: x,
 		},
 	}
 }
@@ -51,6 +71,16 @@ func newBinaryOpExpr(op opType, arg1, arg2 *astExpr) *astExpr {
 			op: op,
 			arg1: arg1,
 			arg2: arg2,
+		},
+	}
+}
+
+func newLetExpr(name string, initExpr, body *astExpr) *astExpr {
+	return &astExpr{
+		letExpr: &astLetExpr{
+			varName: name,
+			varInitExpr: initExpr,
+			body: body,
 		},
 	}
 }
@@ -93,10 +123,11 @@ func parse(symc chan symbol) (*astExpr, error) {
 	return parseExpr(&p)
 }
 // GRAMMAR
-// TODO: implemented "yet" expressions
+// TODO: implement "yet" expressions
 //
 // program := expr
 // expr := [ NUM ]
+//         [ SYM ]
 //         [ "(" inside ")" ]
 //
 // inner := unary | binary | let
@@ -105,11 +136,18 @@ func parse(symc chan symbol) (*astExpr, error) {
 // let := "let" (SYM expr) expr
 
 func parseExpr(p *parser) (*astExpr, error) {
+	// terminates successfully after consuming all tokens in the expression
 	sym := p.read()
 	switch sym.symType {
 	case SYM_LIT:
 		p.consume()
 		return newNumLitExpr(sym.value), nil
+	case SYM_SYM:
+		if _, ok := p.symbols[sym.value]; ok == false {
+			return nil, fmt.Errorf("variable %s is not defined", sym.value)
+		}
+		p.consume()
+		return newVariable(sym.value), nil
 	case SYM_OPEN_PAREN:
 		p.consume()
 		ast, err := parseInner(p)
@@ -118,7 +156,7 @@ func parseExpr(p *parser) (*astExpr, error) {
 		}
 		sym := p.read()
 		if sym.symType != SYM_CLOSE_PAREN {
-			return ast, fmt.Errorf("expected ')' but found %q", sym.value)
+			return ast, fmt.Errorf("expected ')' but found '%s'", sym.value)
 		}
 		p.consume()
 		return ast, err
@@ -129,15 +167,20 @@ func parseExpr(p *parser) (*astExpr, error) {
 
 func parseInner(p *parser) (*astExpr, error) {
 	// last sym read was SYM_OPEN_PARENS and it was consumed
+	// terminates with final ')' unconsumed
 	sym := p.read()
 	if isKnownOpType(sym) {
 		return parseOp(p)
 	}
-	return nil, errors.New("expected an operation")
+	if sym.symType == SYM_SYM && sym.value == "let" {
+		return parseLetExpr(p)
+	}
+	return nil, errors.New("expected an operation or 'let'")
 }
 
 func parseOp(p *parser) (*astExpr, error) {
 	// last sym read was SYM_OP and it is unconsumed
+	// terminates with final ')' unconsumed
 	sym := p.read()
 	op := newOpTypeFromSym(sym)
 	p.consume()
@@ -164,11 +207,46 @@ func parseOp(p *parser) (*astExpr, error) {
 	return newBinaryOpExpr(op, args[0], args[1]), nil
 }
 
+func parseLetExpr(p *parser) (*astExpr, error) {
+	// last sym read was SYM_LET and it is unconsumed
+	// terminates successfully with final ')' still unconsumed
+	p.consume()  // eat 'let'
+	sym := p.read()
+	if sym.symType != SYM_OPEN_PAREN {
+		return nil, errors.New("expected '(' at beginning of variable clause")
+	}
+	p.consume() // eat '('
+	sym = p.read()
+	if sym.symType != SYM_SYM {
+		return nil, fmt.Errorf("expected a variable name and not %q", sym)
+	}
+	varName := sym.value
+	p.consume() // eat variable name
+	varInitExpr, err := parseExpr(p)
+	if err != nil {
+		 return nil, err
+	}
+	// The symbol table entry must be made *after* the init parsing, but before the body
+	// parsing.
+	p.symbols[varName] = struct{}{}
+	sym = p.read()
+	if sym.symType != SYM_CLOSE_PAREN {
+		return nil, fmt.Errorf("expected variable definition to end with ')' and not %q", sym)
+	}
+	p.consume()
+	body, err := parseExpr(p)
+	if err != nil {
+		return nil, err
+	}
+	return newLetExpr(varName, varInitExpr, body), nil
+}
+
 type parser struct {
 	symc chan symbol
 	readAhead bool
 	next symbol
 	astc chan *astExpr
+	symbols map[string]struct{}
 }
 
 func newParser(symc chan symbol) parser {
@@ -176,6 +254,7 @@ func newParser(symc chan symbol) parser {
 		symc: symc,
 		readAhead: false,
 		astc: make(chan *astExpr),
+		symbols: map[string]struct{}{},
 	}
 }
 
@@ -194,14 +273,23 @@ func (p *parser)consume() {
 }
 
 func (a *astExpr)String() string {
+	if a == nil {
+		return "NIL"
+	}
 	if a.numLit != nil {
 		return a.numLit.String()
+	}
+	if a.variable != nil {
+		return a.variable.String()
 	}
 	if a.unaryOpExpr != nil {
 		return a.unaryOpExpr.String()
 	}
 	if a.binOpExpr != nil {
 		return a.binOpExpr.String()
+	}
+	if a.letExpr != nil {
+		return a.letExpr.String()
 	}
 	panic("malformed ast")
 }
@@ -210,12 +298,20 @@ func (a *astNumLit)String() string {
 	return a.value
 }
 
+func (a *astVariable)String() string {
+	return a.value
+}
+
 func (a *astUnaryOpExpr)String() string {
-	return fmt.Sprintf("(- %s)", a.arg.String())
+	return fmt.Sprintf("(- %s)", a.arg)
 }
 
 func (a *astBinOpExpr)String() string {
-	return fmt.Sprintf("(%s %s %s)", a.op.String(), a.arg1.String(), a.arg2.String())
+	return fmt.Sprintf("(%s %s %s)", a.op, a.arg1, a.arg2)
+}
+
+func (a *astLetExpr)String() string {
+	return fmt.Sprintf("(let (%s %s) %s)", a.varName, a.varInitExpr, a.body)
 }
 
 func (ot opType)String() string {
