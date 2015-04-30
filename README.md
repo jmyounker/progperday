@@ -127,7 +127,9 @@ to not waste too much time while performing them.
 
 **20150427** - IntelliJ plugin with lexer and parser for the silly little language.
 
-**20150427** - The IntelliJ plugin now has highlighting and a file icon.
+**20150428** - The IntelliJ plugin now has highlighting and a file icon.
+
+**20150429** - Filling up space and time.
 
 
 ## Ideas
