@@ -1,3 +1,6 @@
+# NOTE: llvm is installed with 'brew install llvm'
+# NOTE: this is only known to work with go 1.4
+
 GOROOT=/usr/local/go
 GOPATH=$(shell cd -- "../../../.." && pwd)
 GO=$(GOROOT)/bin/go
@@ -28,6 +31,6 @@ get:
 build:
 	$(GO_FLAGS) $(GO) build
 
-all: get build
+all: clean get build
 
 .PHONY: all build clean get
