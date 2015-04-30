@@ -84,76 +84,99 @@ func newOpTypeFromSym(s symbol) opType {
 }
 
 func parse(symc chan symbol) (*astExpr, error) {
-	p := &parser{}
-	p.symc = symc
-	p.readAhead = false
+	p := newParser(symc)
 	sym := p.read()
 	// horrible, horrible hack
 	if sym.symType == SYM_EOF {
 		return nil, nil
 	}
-	return parseExpr(p)
+	return parseExpr(&p)
 }
+// GRAMMAR
+// TODO: implemented "yet" expressions
+//
+// program := expr
+// expr := [ NUM ]
+//         [ "(" inside ")" ]
+//
+// inner := unary | binary | let
+// unary := OP("-") expr
+// binary := OP expr expr
+// let := "let" (SYM expr) expr
 
-// Quick and dirty parser.  Were the language any more complicated then I'd
-// probably code up a state machine.
 func parseExpr(p *parser) (*astExpr, error) {
 	sym := p.read()
-	p.consume()
-	if sym.symType == SYM_LIT {
+	switch sym.symType {
+	case SYM_LIT:
+		p.consume()
 		return newNumLitExpr(sym.value), nil
-	}
-	if sym.symType == SYM_OPEN_PAREN {
+	case SYM_OPEN_PAREN:
+		p.consume()
+		ast, err := parseInner(p)
+		if err != nil {
+			return ast, err
+		}
 		sym := p.read()
-		if !isKnownOpType(sym) {
-			return nil, errors.New("unexpected symbol")
-		}
-		p.consume()
-		op := newOpTypeFromSym(sym)
-		if sym.symType == SYM_OP && op == OP_MINUS {
-			arg1, err := parseExpr(p)
-			if err != nil {
-				return nil, err
-			}
-			sym = p.read()
-			if sym.symType == SYM_CLOSE_PAREN {
-				p.consume()
-				return newUnaryOpExpr(arg1), nil
-			}
-
-			arg2, err := parseExpr(p)
-			if err != nil {
-				return nil, err
-			}
-			sym = p.read()
-			p.consume()
-			if sym.symType != SYM_CLOSE_PAREN {
-				return nil, errors.New("expected close paren")
-			}
-			return newBinaryOpExpr(op, arg1, arg2), nil
-		}
-		arg1, err := parseExpr(p)
-		if err != nil {
-			return nil, err
-		}
-		arg2, err := parseExpr(p)
-		if err != nil {
-			return nil, err
-		}
-		sym = p.read()
-		p.consume()
 		if sym.symType != SYM_CLOSE_PAREN {
-			return nil, errors.New("expected close paren")
+			return ast, fmt.Errorf("expected ')' but found %q", sym.value)
 		}
-		return newBinaryOpExpr(op, arg1, arg2), nil
+		p.consume()
+		return ast, err
+	default:
+		return nil, errors.New("expected '(' or a literal")
 	}
-	return nil, errors.New("expected '(' or a literal")
+}
+
+func parseInner(p *parser) (*astExpr, error) {
+	// last sym read was SYM_OPEN_PARENS and it was consumed
+	sym := p.read()
+	if isKnownOpType(sym) {
+		return parseOp(p)
+	}
+	return nil, errors.New("expected an operation")
+}
+
+func parseOp(p *parser) (*astExpr, error) {
+	// last sym read was SYM_OP and it is unconsumed
+	sym := p.read()
+	op := newOpTypeFromSym(sym)
+	p.consume()
+	args := []*astExpr{}
+	for ; sym.symType != SYM_CLOSE_PAREN; sym = p.read() {
+		arg, err := parseExpr(p)
+		if err != nil {
+			return nil, err
+		}
+		args = append(args, arg)
+	} // terminating parens still unconsumed
+	if len(args) == 0 {
+		return nil, errors.New("expected at least one argument to operation")
+	}
+	if len(args) > 2 {
+		return nil, errors.New("expected no more than two arguments to an operation")
+	}
+	if len(args) == 1 {
+		if op != OP_MINUS {
+			return nil, fmt.Errorf("expected two arguments for operation '%s'", op.String())
+		}
+		return newUnaryOpExpr(args[0]), nil
+	}
+	return newBinaryOpExpr(op, args[0], args[1]), nil
 }
 
 type parser struct {
 	symc chan symbol
 	readAhead bool
 	next symbol
+	astc chan *astExpr
+}
+
+func newParser(symc chan symbol) parser {
+	return parser{
+		symc: symc,
+		readAhead: false,
+		astc: make(chan *astExpr),
+	}
 }
 
 func (p *parser)read() symbol {
