@@ -123,7 +123,6 @@ func parse(symc chan symbol) (*astExpr, error) {
 	return parseExpr(&p)
 }
 // GRAMMAR
-// TODO: implement "yet" expressions
 //
 // program := expr
 // expr := [ NUM ]
