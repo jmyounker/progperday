@@ -131,6 +131,8 @@ to not waste too much time while performing them.
 
 **20150429** - Filling up space and time.
 
+**20150430** - Little language now has variables via let expressions.
+
 
 ## Ideas
 * add functions to silly language
