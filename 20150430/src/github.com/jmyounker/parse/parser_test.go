@@ -27,6 +27,7 @@ var errorTests = []string{
 	"(1",
 	"(let (x x) (* 2 4))",
 	"x",
+	"(+ (let (x 4) (* 2 4)) x)",
 }
 
 func TestEmptyParse(t *testing.T) {

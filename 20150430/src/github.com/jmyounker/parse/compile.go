@@ -100,7 +100,7 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 		if !ok {
 			return LLVM_ERR_VAL, fmt.Errorf("could not find variable %s", a.variable.value)
 		}
-		return value, nil
+		return value.(llvm.Value), nil
 	}
 	if a.unaryOpExpr != nil {
 		expr1, err := c.compileExpr(a.unaryOpExpr.arg, "iU")
