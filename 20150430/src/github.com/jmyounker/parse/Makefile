@@ -33,4 +33,10 @@ test:
 
 all: clean get build test
 
-.PHONY: all build clean get test
+env:
+	launchctl setenv GOROOT "$(GOROOT)"
+	launchctl setenv GOPATH "$(GOPATH)"
+	launchctl setenv CGO_CFLAGS "$(CGO_CFLAGS)"
+	launchctl setenv CGO_LDFLAGS "$(CGO_LDFLAGS)"
+
+.PHONY: all build clean env get test
