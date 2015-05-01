@@ -1,24 +1,22 @@
 package main
 
-import "github.com/axw/gollvm/llvm"
-
-type symTable []map[string]llvm.Value
+type symTable []map[string]interface{}
 
 func (st *symTable)push() {
-	*st = append(*st, map[string]llvm.Value{})
+	*st = append(*st, map[string]interface{}{})
 }
 
 func (st *symTable)pop() {
 	*st = (*st)[0:len(*st)-1]
 }
 
-func (st symTable)add(n string, v llvm.Value) {
+func (st symTable)add(n string, v interface{}) {
 	st[len(st)-1][n] = v
 }
 
-func (st symTable)get(n string) (llvm.Value, bool) {
+func (st symTable)get(n string) (interface{}, bool) {
 	if len(st) == 0 {
-		return llvm.Value{}, false
+		return struct{}{}, false
 	}
 	for i := len(st)-1; i >= 0; i-- {
 		v, ok := st[i][n]
@@ -26,5 +24,5 @@ func (st symTable)get(n string) (llvm.Value, bool) {
 			return v, true
 		}
 	}
-	return llvm.Value{}, false
+	return struct{}{}, false
 }

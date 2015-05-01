@@ -142,7 +142,7 @@ func parseExpr(p *parser) (*astExpr, error) {
 		p.consume()
 		return newNumLitExpr(sym.value), nil
 	case SYM_SYM:
-		if _, ok := p.symbols[sym.value]; ok == false {
+		if _, ok := p.symt.get(sym.value); !ok {
 			return nil, fmt.Errorf("variable %s is not defined", sym.value)
 		}
 		p.consume()
@@ -227,7 +227,9 @@ func parseLetExpr(p *parser) (*astExpr, error) {
 	}
 	// The symbol table entry must be made *after* the init parsing, but before the body
 	// parsing.
-	p.symbols[varName] = struct{}{}
+	p.symt.push()
+	p.symt.add(varName, struct{}{})
+	defer p.symt.pop()
 	sym = p.read()
 	if sym.symType != SYM_CLOSE_PAREN {
 		return nil, fmt.Errorf("expected variable definition to end with ')' and not %q", sym)
@@ -245,7 +247,7 @@ type parser struct {
 	readAhead bool
 	next symbol
 	astc chan *astExpr
-	symbols map[string]struct{}
+	symt symTable
 }
 
 func newParser(symc chan symbol) parser {
@@ -253,7 +255,7 @@ func newParser(symc chan symbol) parser {
 		symc: symc,
 		readAhead: false,
 		astc: make(chan *astExpr),
-		symbols: map[string]struct{}{},
+		symt: symTable{},
 	}
 }
 
