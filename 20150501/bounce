@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+import curses
+import time
+
+
+def main():
+  w = curses.initscr()
+  w.clear()
+  w.refresh()
+  my, mx = w.getmaxyx()
+  print my, mx
+  x = mx / 2.0
+  y = my / 2.0
+  vx = 1
+  vy = 1
+  while True:
+    time.sleep(1.0/30.0)
+    my, mx = w.getmaxyx()
+    w.delch(int(y), int(x))
+    x += vx
+    y += vy
+    if int(x) == mx - 1:
+      x = mx - 1
+      vx = -vx
+    if int(x) == 0:
+      x = 0
+      vx = -vx
+    if int(y) == my - 1:
+      y = my - 1
+      vy = -vy
+    if int(y) == 0:
+      y = 0
+      vy = -vy
+    w.insch(int(y), int(x), 'x')
+    w.refresh()
+      
+
+if __name__ == '__main__':
+  main()
+
+      
+
+
