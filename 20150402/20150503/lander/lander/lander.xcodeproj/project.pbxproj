@@ -1,0 +1,423 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1FED464B1AF6DE4F0003002E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FED464A1AF6DE4F0003002E /* AppDelegate.swift */; };
+		1FED464D1AF6DE4F0003002E /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FED464C1AF6DE4F0003002E /* GameView.swift */; };
+		1FED464F1AF6DE4F0003002E /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FED464E1AF6DE4F0003002E /* GameViewController.swift */; };
+		1FED46511AF6DE4F0003002E /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FED46501AF6DE4F0003002E /* art.scnassets */; };
+		1FED46531AF6DE4F0003002E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FED46521AF6DE4F0003002E /* Images.xcassets */; };
+		1FED46561AF6DE4F0003002E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FED46541AF6DE4F0003002E /* MainMenu.xib */; };
+		1FED46621AF6DE4F0003002E /* landerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FED46611AF6DE4F0003002E /* landerTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1FED465C1AF6DE4F0003002E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FED463D1AF6DE4F0003002E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1FED46441AF6DE4F0003002E;
+			remoteInfo = lander;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1FED46451AF6DE4F0003002E /* lander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lander.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FED46491AF6DE4F0003002E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1FED464A1AF6DE4F0003002E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1FED464C1AF6DE4F0003002E /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		1FED464E1AF6DE4F0003002E /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		1FED46501AF6DE4F0003002E /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		1FED46521AF6DE4F0003002E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1FED46551AF6DE4F0003002E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1FED465B1AF6DE4F0003002E /* landerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = landerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FED46601AF6DE4F0003002E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1FED46611AF6DE4F0003002E /* landerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = landerTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1FED46421AF6DE4F0003002E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FED46581AF6DE4F0003002E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1FED463C1AF6DE4F0003002E = {
+			isa = PBXGroup;
+			children = (
+				1FED46471AF6DE4F0003002E /* lander */,
+				1FED465E1AF6DE4F0003002E /* landerTests */,
+				1FED46461AF6DE4F0003002E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1FED46461AF6DE4F0003002E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1FED46451AF6DE4F0003002E /* lander.app */,
+				1FED465B1AF6DE4F0003002E /* landerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1FED46471AF6DE4F0003002E /* lander */ = {
+			isa = PBXGroup;
+			children = (
+				1FED464A1AF6DE4F0003002E /* AppDelegate.swift */,
+				1FED464C1AF6DE4F0003002E /* GameView.swift */,
+				1FED464E1AF6DE4F0003002E /* GameViewController.swift */,
+				1FED46501AF6DE4F0003002E /* art.scnassets */,
+				1FED46521AF6DE4F0003002E /* Images.xcassets */,
+				1FED46541AF6DE4F0003002E /* MainMenu.xib */,
+				1FED46481AF6DE4F0003002E /* Supporting Files */,
+			);
+			path = lander;
+			sourceTree = "<group>";
+		};
+		1FED46481AF6DE4F0003002E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1FED46491AF6DE4F0003002E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1FED465E1AF6DE4F0003002E /* landerTests */ = {
+			isa = PBXGroup;
+			children = (
+				1FED46611AF6DE4F0003002E /* landerTests.swift */,
+				1FED465F1AF6DE4F0003002E /* Supporting Files */,
+			);
+			path = landerTests;
+			sourceTree = "<group>";
+		};
+		1FED465F1AF6DE4F0003002E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1FED46601AF6DE4F0003002E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1FED46441AF6DE4F0003002E /* lander */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FED46651AF6DE4F0003002E /* Build configuration list for PBXNativeTarget "lander" */;
+			buildPhases = (
+				1FED46411AF6DE4F0003002E /* Sources */,
+				1FED46421AF6DE4F0003002E /* Frameworks */,
+				1FED46431AF6DE4F0003002E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lander;
+			productName = lander;
+			productReference = 1FED46451AF6DE4F0003002E /* lander.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1FED465A1AF6DE4F0003002E /* landerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FED46681AF6DE4F0003002E /* Build configuration list for PBXNativeTarget "landerTests" */;
+			buildPhases = (
+				1FED46571AF6DE4F0003002E /* Sources */,
+				1FED46581AF6DE4F0003002E /* Frameworks */,
+				1FED46591AF6DE4F0003002E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1FED465D1AF6DE4F0003002E /* PBXTargetDependency */,
+			);
+			name = landerTests;
+			productName = landerTests;
+			productReference = 1FED465B1AF6DE4F0003002E /* landerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1FED463D1AF6DE4F0003002E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = "Jeff Younker";
+				TargetAttributes = {
+					1FED46441AF6DE4F0003002E = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+					1FED465A1AF6DE4F0003002E = {
+						CreatedOnToolsVersion = 6.3.1;
+						TestTargetID = 1FED46441AF6DE4F0003002E;
+					};
+				};
+			};
+			buildConfigurationList = 1FED46401AF6DE4F0003002E /* Build configuration list for PBXProject "lander" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1FED463C1AF6DE4F0003002E;
+			productRefGroup = 1FED46461AF6DE4F0003002E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1FED46441AF6DE4F0003002E /* lander */,
+				1FED465A1AF6DE4F0003002E /* landerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1FED46431AF6DE4F0003002E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FED46511AF6DE4F0003002E /* art.scnassets in Resources */,
+				1FED46531AF6DE4F0003002E /* Images.xcassets in Resources */,
+				1FED46561AF6DE4F0003002E /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FED46591AF6DE4F0003002E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1FED46411AF6DE4F0003002E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FED464D1AF6DE4F0003002E /* GameView.swift in Sources */,
+				1FED464F1AF6DE4F0003002E /* GameViewController.swift in Sources */,
+				1FED464B1AF6DE4F0003002E /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1FED46571AF6DE4F0003002E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FED46621AF6DE4F0003002E /* landerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1FED465D1AF6DE4F0003002E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1FED46441AF6DE4F0003002E /* lander */;
+			targetProxy = 1FED465C1AF6DE4F0003002E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1FED46541AF6DE4F0003002E /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1FED46551AF6DE4F0003002E /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1FED46631AF6DE4F0003002E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1FED46641AF6DE4F0003002E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1FED46661AF6DE4F0003002E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = lander/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1FED46671AF6DE4F0003002E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = lander/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1FED46691AF6DE4F0003002E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = landerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lander.app/Contents/MacOS/lander";
+			};
+			name = Debug;
+		};
+		1FED466A1AF6DE4F0003002E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = landerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lander.app/Contents/MacOS/lander";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1FED46401AF6DE4F0003002E /* Build configuration list for PBXProject "lander" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FED46631AF6DE4F0003002E /* Debug */,
+				1FED46641AF6DE4F0003002E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1FED46651AF6DE4F0003002E /* Build configuration list for PBXNativeTarget "lander" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FED46661AF6DE4F0003002E /* Debug */,
+				1FED46671AF6DE4F0003002E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		1FED46681AF6DE4F0003002E /* Build configuration list for PBXNativeTarget "landerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FED46691AF6DE4F0003002E /* Debug */,
+				1FED466A1AF6DE4F0003002E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1FED463D1AF6DE4F0003002E /* Project object */;
+}
