@@ -133,7 +133,10 @@ to not waste too much time while performing them.
 
 **20150430** - Little language now has variables via let expressions.
 
-**20150501** - A little fun bouncing an x using curses.
+**20150501** - A little fun bouncing x using curses.
+
+**20150502** - A field of bouncing x's using curses.
+
 
 ## Ideas
 * add functions to silly language

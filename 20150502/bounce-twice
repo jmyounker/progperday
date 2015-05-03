@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import curses
+import random
+import time
+
+
+class Pos(object):
+  def __init__(self, y, x, yv, xv):
+    self._x = x
+    self._y = y
+    self.xv = xv
+    self.yv = yv
+
+  @property
+  def x(self):
+    return int(self._x)
+
+  @property
+  def y(self):
+    return int(self._y)
+
+  def move(self):
+    self._x += self.xv
+    self._y += self.yv
+
+  def bounce(self, my, mx):
+    if self._x >= mx - 1:
+      self._x = mx - 1
+      self.xv = -self.xv
+    if self._y >= my - 1:
+      self._y = my - 1
+      self.yv = -self.yv
+    if self._x <= 0:
+      self._x = 0
+      self.xv = -self.xv
+    if self._y <= 0:
+      self._y = 0
+      self.yv = -self.yv
+     
+ 
+def place_randomly(my, mx, vmin, vmax):
+  return Pos(
+    random.randint(1, my-1),
+    random.randint(1, mx-1),
+    random.uniform(vmin, vmax),
+    random.uniform(vmin, vmax))
+  
+
+def main():
+  w = curses.initscr()
+  w.clear()
+  w.refresh()
+  my, mx = w.getmaxyx()
+  ps = [place_randomly(my, mx, 0.3, 1) for x in range(0, 200)]
+  painted = []
+  while True:
+    time.sleep(1.0/30.0)
+    my, mx = w.getmaxyx()
+    for p in ps:
+      try:
+        w.addch(p.y, p.x, " ")
+      except:
+        pass
+    painted = []
+    for p in ps:
+      p.move()
+      p.bounce(my, mx)
+    for p in ps:
+      try:
+        w.addch(p.y, p.x, "x")
+      except:
+        pass
+    w.refresh()
+      
+
+if __name__ == '__main__':
+  main()
+
+      
+
+
