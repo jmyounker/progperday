@@ -12,7 +12,7 @@ var (
 	LLVM_ERR_VAL = llvm.ConstFloat(llvm.DoubleType(), -1.0)
 )
 
-func compileAndRun(mod *llvm.Module, f *llvm.Value) float64 {
+func compileAndRun(mod *llvm.Module, f llvm.Value) float64 {
 	llvm.LinkInJIT()
 	llvm.InitializeNativeTarget()
 
@@ -32,7 +32,7 @@ func compileAndRun(mod *llvm.Module, f *llvm.Value) float64 {
 	pass.Run(*mod)
 
 	exec_args := []llvm.GenericValue{}
-	exec_res := engine.RunFunction(*f, exec_args)
+	exec_res := engine.RunFunction(f, exec_args)
 	return exec_res.Float(llvm.DoubleType())
 }
 
@@ -40,6 +40,22 @@ type compiler struct {
 	bld    llvm.Builder
 	varCnt uint64
 	symt   symTable
+	symft  symTable
+}
+
+func newCompiler() *compiler {
+	c := compiler{
+		varCnt: 0,
+		symt: symTable{},
+		symft: symTable{},
+	}
+	c.symft.push()
+	return &c
+}
+
+type funcEntry struct {
+	fn  *astFnStmt
+	def llvm.Value
 }
 
 func (c compiler) dispose() {
@@ -51,47 +67,67 @@ func (c compiler) newVar(x string) string {
 	return fmt.Sprintf("_VAR_x_%d", c.varCnt)
 }
 
-func buildIR(a *astExpr) (*llvm.Module, *llvm.Value, error) {
+func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 	mod := llvm.NewModule("calc_module")
 
-	// Define function
-	calc_args := []llvm.Type{}
-	calc_type := llvm.FunctionType(llvm.DoubleType(), calc_args, false)
-	calcf := llvm.AddFunction(mod, "calc", calc_type)
-	calcf.SetFunctionCallConv(llvm.CCallConv)
-
-	// Set up basic block for function body
-	entry := llvm.AddBasicBlock(calcf, "entry")
-	bld := llvm.NewBuilder()
-	symt := symTable{}
-	c := compiler{
-		bld:  bld,
-		symt: symt,
-	}
+	c := newCompiler()
 	defer c.dispose()
-	bld.SetInsertPointAtEnd(entry)
+	for _, fn := range a.funcs {
+		// Define function
+		fnArgs := []llvm.Type{}
+		for i := 0; i < len(fn.args); i++ {
+			fnArgs = append(fnArgs, llvm.DoubleType())
+		}
+		fnType := llvm.FunctionType(llvm.DoubleType(), fnArgs, false)
+		fnDef := llvm.AddFunction(mod, fn.name, fnType)
+		fnDef.SetFunctionCallConv(llvm.CCallConv)
 
-	// Compile expression into basic block
-	retv, err := c.compileExpr(a, "_retvn")
-	if err != nil {
-		return nil, nil, err
+		c.symft.add(fn.name, &funcEntry{fn, fnDef})
 	}
-	bld.CreateRet(retv)
+
+	bld := llvm.NewBuilder()
+	for _, fn := range a.funcs {
+		feAny, ok := c.symft.get(fn.name)
+		if !ok {
+			panic("all functions should have been created here")
+		}
+		fe := feAny.(*funcEntry)
+		c.symt.push()
+		for i := 0; i < len(fe.fn.args); i++ {
+			c.symt.add(fe.fn.args[i], fe.def.Param(i))
+		}
+		entry := llvm.AddBasicBlock(fe.def, fmt.Sprintf("%s_entry", fn.name))
+		bld.SetInsertPointAtEnd(entry)
+		retv, err := c.compileExpr(fn.body, "_retvn")
+		if err != nil {
+			return nil, llvm.Value{}, err
+		}
+		bld.CreateRet(retv)
+		c.symt.pop()
+	}
 
 	// Validate results
-	err = llvm.VerifyModule(mod, llvm.ReturnStatusAction)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error: %s", err)
+	if err := llvm.VerifyModule(mod, llvm.ReturnStatusAction); err != nil {
+		return nil, llvm.Value{}, fmt.Errorf("error: %s", err)
 	}
 
-	return &mod, &calcf, nil
+	feMain, ok := c.symft.get("main")
+	if !ok {
+		panic("expected to fine a main function")
+	}
+	return &mod, feMain.(*funcEntry).def, nil
 }
 
 func (c compiler) compileProg(a *astProg) error {
+	for _, fn := range a.funcs {
+		if err := c.compileFunc(fn); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (c compiler) compileFn(a *astFnStmt) error {
+func (c compiler) compileFunc(a *astFnStmt) error {
  	return nil
 }
 
@@ -131,6 +167,24 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 		default:
 			panic("an operation has not been implemented yet")
 		}
+	}
+	if a.callExpr != nil {
+		fe, ok := c.symft.get(a.callExpr.name)
+		fmt.Printf("%#v\n", fe)
+		if !ok {
+			panic(fmt.Sprintf("function %q should already be defined", a.callExpr.name))
+		}
+		args := []llvm.Value{}
+		for i, arg := range a.callExpr.args {
+			an := c.newVar(fmt.Sprintf("%s%d", a.callExpr.name, i))
+			res, err := c.compileExpr(arg, an)
+			if err != nil {
+				return LLVM_ERR_VAL, err
+			}
+			args = append(args, res)
+		}
+		d := fe.(*funcEntry).def
+		return c.bld.CreateCall(d, args, vn), nil
 	}
 	if a.letExpr != nil {
 		v := c.newVar(a.letExpr.varName)

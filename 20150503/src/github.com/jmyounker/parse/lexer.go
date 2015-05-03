@@ -103,7 +103,7 @@ func startSymState(lxr *lexer) lxrStateFn {
 		return nil
 	}
 	c := lxr.current()
-	if c == " " {
+	if isWhitespace(c) {
 		lxr.advance()
 		lxr.consume()
 		return startSymState
@@ -155,7 +155,7 @@ func symState(lxr *lexer) lxrStateFn {
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
+	if isWhitespace(c) || c == "(" || c == ")" {
 		lxr.rawSymbol <- symbol{SYM_SYM, lxr.produce()}
 		return startSymState
 	}
@@ -173,7 +173,7 @@ func negNumberState(lxr *lexer) lxrStateFn {
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
+	if isWhitespace(c) || c == "(" || c == ")" {
 		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return startSymState
 	}
@@ -191,7 +191,7 @@ func numberState(lxr *lexer) lxrStateFn {
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
+	if isWhitespace(c) || c == "(" || c == ")" {
 		lxr.rawSymbol <- symbol{SYM_LIT, lxr.produce()}
 		return startSymState
 	}
@@ -201,6 +201,10 @@ func numberState(lxr *lexer) lxrStateFn {
 	}
 	lxr.rawSymbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
+}
+
+func isWhitespace(c string) bool {
+	return c == " " || c == "\n" || c == "\t"
 }
 
 // keywordLexer wraps a plain lexer and translates symType SYM_SYM into more specific

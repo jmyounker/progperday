@@ -4,13 +4,14 @@ import (
 	"testing"
 )
 
-var parserTests = []struct{
+var exprTests = []struct{
 	in string
 	want string
 }{
 	{"-4", "-4"},
 	{"4", "4"},
 	{"(- 1)", "(- 1)"},
+	{"(-\t1\n)", "(- 1)"},
 	{"(* 1 2)", "(* 1 2)"},
 	{"(/ 1 2)", "(/ 1 2)"},
 	{"(+ 1 2)", "(+ 1 2)"},
@@ -22,6 +23,15 @@ var parserTests = []struct{
 	{"(let (x 32) (let (x x) (* 2 x)))", "(let (x 32) (let (x x) (* 2 x)))"},
 	{"(foo 43 47 36)", "(foo 43 47 36)"},
 	{"(+ (bar) 37)", "(+ (bar) 37)"},
+}
+
+
+var progTests = []struct{
+	in string
+	want string
+}{
+//	{"(fn main () -4)", "(fn main () -4)"},
+	{"(fn main () (add 2 4)) (fn add (x y) (+ x y))", "(fn main () (add 2 4))(fn add (x y) (+ x y))"},
 }
 
 var errorTests = []string{
@@ -42,9 +52,9 @@ func TestEmptyParse(t *testing.T) {
 	}
 }
 
-func TestParser(t *testing.T) {
-	for _, tc := range parserTests {
-		a, err := parse(newLexer(tc.in))
+func TestExprParser(t *testing.T) {
+	for _, tc := range exprTests {
+		a, err := parseExprFrom(newLexer(tc.in))
 		if err != nil {
 			t.Fatal("expected no error, but got: %s\n", err)
 		}
@@ -56,9 +66,31 @@ func TestParser(t *testing.T) {
 
 func TestParserErrors(t *testing.T) {
 	for _, in := range errorTests {
-		_, err := parse(newLexer(in))
+		_, err := parseExprFrom(newLexer(in))
 		if err == nil {
 			t.Fail()
 		}
 	}
+}
+
+func TestProgParser(t *testing.T) {
+	for _, tc := range progTests {
+		a, err := parse(newLexer(tc.in))
+		if err != nil {
+			t.Fatal("expected no error, but got: %s\n", err)
+		}
+		if tc.want != a.String() {
+			t.Fatalf("want %#v but got %#v", tc.want, a.String())
+		}
+	}
+}
+
+func parseExprFrom(symc chan symbol) (*astExpr, error) {
+	p := newParser(symc)
+	sym := p.read()
+	// horrible, horrible hack
+	if sym.symType == SYM_EOF {
+		return nil, nil
+	}
+	return parseExpr(&p)
 }

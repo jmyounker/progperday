@@ -65,6 +65,7 @@ const (
 	SYM_OPEN_PAREN
 	SYM_CLOSE_PAREN
 	SYM_SYM
+	SYM_LET
 	SYM_ERR
 )
 
@@ -195,4 +196,34 @@ func numberState(lxr *lexer) lxrStateFn {
 	}
 	lxr.symbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
+}
+
+// keywordLexer wraps a plain lexer and translates symType SYM_SYM into more specific
+// symbols
+type keywordLexer struct {
+	symIn chan symbol
+	symOut chan symbol
+}
+
+func startKeywordLexer(symIn chan symbol, symOut chan symbol) {
+	kwl := keywordLexer{
+		symIn: symIn,
+		symOut: symOut,
+	}
+	go lexUp(&kwl)
+}
+
+func lexUp(kwl *keywordLexer) {
+	for sym := range kwl.symIn {
+		if sym.symType != SYM_SYM {
+			kwl.symOut <- sym
+		}
+		switch sym.value {
+		case "let":
+			sym.symType = SYM_LET
+		default:
+			// do nothing
+		}
+		kwl.symOut <- sym
+	}
 }

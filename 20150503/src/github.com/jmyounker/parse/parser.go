@@ -5,155 +5,18 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strings"
 )
 
-type astProg struct {
-	funcs []*astFnStmt
-}
-
-type astExpr struct {
-	numLit *astNumLit
-	variable *astVariable
-	unaryOpExpr *astUnaryOpExpr
-	binOpExpr *astBinOpExpr
-	callExpr *astCallExpr
-	letExpr *astLetExpr
-}
-
-type astNumLit struct {
-	value string
-}
-
-type astVariable struct {
-	value string
-}
-
-type astUnaryOpExpr struct {
-	arg *astExpr
-}
-
-type astBinOpExpr struct {
-	op opType
-	arg1 *astExpr
-	arg2 *astExpr
-}
-
-type astCallExpr struct {
-	name string
-	args []*astExpr
-}
-
-type astLetExpr struct {
-	varName string
-	varInitExpr *astExpr
-	body *astExpr
-}
-
-type astFnStmt struct {
-	name string
-	args []string
-	body *astExpr
-}
-
-func newNumLitExpr(x string) *astExpr {
-	return &astExpr{
-		numLit: &astNumLit {
-			value: x,
-		},
-	}
-}
-
-func newVariable(x string) *astExpr {
-	return &astExpr{
-		variable: &astVariable {
-			value: x,
-		},
-	}
-}
-
-func newUnaryOpExpr(arg *astExpr) *astExpr {
-	return &astExpr{
-		unaryOpExpr: &astUnaryOpExpr {
-			arg: arg,
-		},
-	}
-}
-
-func newBinaryOpExpr(op opType, arg1, arg2 *astExpr) *astExpr {
-	return &astExpr{
-		binOpExpr: &astBinOpExpr {
-			op: op,
-			arg1: arg1,
-			arg2: arg2,
-		},
-	}
-}
-
-func newCallExpr(name string, args []*astExpr) *astExpr {
-	return &astExpr{
-		callExpr: &astCallExpr{
-			name: name,
-			args: args,
-		},
-	}
-}
-
-func newLetExpr(name string, initExpr, body *astExpr) *astExpr {
-	return &astExpr{
-		letExpr: &astLetExpr{
-			varName: name,
-			varInitExpr: initExpr,
-			body: body,
-		},
-	}
-}
-
-func newFnStmt(name string, args []string, body *astExpr) *astFnStmt {
-	return &astFnStmt{
-		name: name,
-		args: args,
-		body: body,
-	}
-}
-
-type opType int
-
-const (
-	OP_MINUS opType = iota
-	OP_DIV
-	OP_PLUS
-	OP_MULT
-)
-
-func isKnownOpType(s symbol) bool {
-	return s.value == "-" || s.value == "+" || s.value == "*" || s.value == "/"
-}
-
-func newOpTypeFromSym(s symbol) opType {
-	switch s.value {
-	case "-":
-		return OP_MINUS
-	case "+":
-		return OP_PLUS
-	case "*":
-		return OP_MULT
-	case "/":
-		return OP_DIV
-	default:
-		panic("not reachable")
-	}
-}
-
-func parse(symc chan symbol) (*astExpr, error) {
+func parse(symc chan symbol) (*astProg, error) {
 	p := newParser(symc)
 	sym := p.read()
 	// horrible, horrible hack
 	if sym.symType == SYM_EOF {
 		return nil, nil
 	}
-	return parseExpr(&p)
+	return parseProg(&p)
 }
+
 // GRAMMAR
 //
 // program := fn_def+
@@ -170,28 +33,47 @@ func parse(symc chan symbol) (*astExpr, error) {
 // let := "let" "(" SYM expr ")" expr
 
 func parseProg(p *parser) (*astProg, error) {
-	fns := []*astFnStmt{}
+	parseLoop:
 	for true {
 		sym := p.read()
+
 		switch sym.symType {
 		case SYM_EOF:
-			break
+			break parseLoop
+
 		case SYM_OPEN_PAREN:
 			fn, err := parseFnStmt(p)
 			if err != nil {
 				return nil, err
 			}
-			sym = p.read()
-			if sym.symType != SYM_CLOSE_PAREN {
-				return nil, fmt.Errorf("expected function to end with ')' but found %s instead", sym.value)
+
+			// record function definition
+			if _, ok := p.funcs[fn.name]; ok {
+				return nil, fmt.Errorf("function %s is already defined", fn.name)
 			}
-			p.consume()
-			fns = append(fns, fn)
+			p.funcs[fn.name] = fn
+
 		default:
-			return nil, fmt.Errorf("Expected '(' to start function definition, but got %s", sym.value)
+			return nil, fmt.Errorf("expected '(' to start function definition, but got %s", sym.value)
 		}
 	}
-	return &astProg{funcs: fns}, nil
+
+	// ensure that main function exists
+	fnMain, ok := p.funcs["main"]
+	if !ok {
+		return nil, errors.New("a function 'main' must be defined")
+	}
+	if len(fnMain.args) != 0 {
+		return nil, fmt.Errorf(
+			"function 'main' has %d arguments but must have zero",
+			len(fnMain.args))
+	}
+
+	if err := resolveFuncs(p); err != nil {
+		return nil, err
+	}
+
+	return &astProg{funcs: p.funcs}, nil
 }
 
 func parseExpr(p *parser) (*astExpr, error) {
@@ -272,7 +154,7 @@ func parseOp(p *parser) (*astExpr, error) {
 func parseLetExpr(p *parser) (*astExpr, error) {
 	// last sym read was SYM_LET and it is unconsumed
 	// terminates successfully with final ')' still unconsumed
-	p.consume()  // eat 'let'
+	p.consume() // eat 'let'
 	sym := p.read()
 	if sym.symType != SYM_OPEN_PAREN {
 		return nil, fmt.Errorf("expected '(' at beginning of variable clause, but got %s", sym.value)
@@ -286,7 +168,7 @@ func parseLetExpr(p *parser) (*astExpr, error) {
 	p.consume() // eat variable name
 	varInitExpr, err := parseExpr(p)
 	if err != nil {
-		 return nil, err
+		return nil, err
 	}
 	// The symbol table entry must be made *after* the init parsing, but before the body
 	// parsing.
@@ -306,35 +188,53 @@ func parseLetExpr(p *parser) (*astExpr, error) {
 }
 
 func parseFnStmt(p *parser) (*astFnStmt, error) {
-	// last sym read was SYM_FN and it is unconsumed
+	// last sym read was '(' and it is unconsumed
 	// terminates successfully with final ')' still unconsumed
-	p.consume()  // eat 'let'
+	sym := p.read()
+	if sym.symType != SYM_OPEN_PAREN {
+		return nil, fmt.Errorf("expected function def to start with '(' and not %q", sym.value)
+	}
+	p.consume() // eat '('
+
+	sym = p.read()
+	if sym.symType != SYM_FN {
+		return nil, fmt.Errorf("expected function def to start with 'fn' and not %q", sym.value)
+	}
+	p.consume() // eat 'fn'
 
 	// read new function name
-	sym := p.read()
+	sym = p.read()
 	if sym.symType != SYM_SYM {
-		return nil, fmt.Errorf("expected a function name and not %s", sym.value)
+		return nil, fmt.Errorf("expected a function name and not %q", sym.value)
 	}
-	p.consume()
+	p.consume() // eat function name
 	name := sym.value
 
 	// read parameter list
+	sym = p.read()
 	if sym.symType != SYM_OPEN_PAREN {
-		return nil, errors.New("expected '(' at beginning of variable clause")
+		return nil, fmt.Errorf("expected '(' at beginning of variable clause and not %q", sym.value)
 	}
 	p.consume() // eat '('
+
+
+	// Read arguments
+	p.symt.push()
+	defer p.symt.pop()
 	args := []string{}
+argLoop:
 	for true {
 		sym = p.read()
 		switch sym.symType {
 		case SYM_SYM:
 			p.consume()
+			p.symt.add(sym.value, struct{}{})
 			args = append(args, sym.value)
 		case SYM_CLOSE_PAREN:
 			p.consume()
-			break
+			break argLoop
 		default:
-			return nil, fmt.Errorf("expecting variable or ')'")
+			return nil, fmt.Errorf("expecting variable or ')' and not %q", sym.value)
 		}
 	}
 
@@ -343,6 +243,12 @@ func parseFnStmt(p *parser) (*astFnStmt, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	sym = p.read()
+	if sym.symType != SYM_CLOSE_PAREN {
+		return nil, fmt.Errorf("expected function def to end with ')' and not %q", sym.value)
+	}
+	p.consume() // eat ')'
 
 	return newFnStmt(name, args, body), nil
 }
@@ -373,27 +279,50 @@ func parseCallExpr(p *parser) (*astExpr, error) {
 		args = append(args, arg)
 	}
 
-	return newCallExpr(name, args), nil
+	ce := newCallExpr(name, args)
+	p.unresolved = append(p.unresolved, ce.callExpr)
+	return ce, nil
+}
+
+func resolveFuncs(p *parser) error {
+	for _, call := range p.unresolved {
+		fn, ok := p.funcs[call.name]
+		if !ok {
+			return fmt.Errorf("function %q is not defined", call.name)
+		}
+		if len(call.args) != len(fn.args) {
+			return fmt.Errorf(
+				"function %s has %d args but was called with %d args",
+				call.name,
+				len(call.args),
+				len(fn.args))
+		}
+	}
+	return nil
 }
 
 type parser struct {
-	symc chan symbol
-	readAhead bool
-	next symbol
-	astc chan *astExpr
-	symt symTable
+	symc       chan symbol
+	readAhead  bool
+	next       symbol
+	astc       chan *astExpr
+	symt       symTable
+	unresolved []*astCallExpr
+	funcs      map[string]*astFnStmt
 }
 
 func newParser(symc chan symbol) parser {
 	return parser{
-		symc: symc,
-		readAhead: false,
-		astc: make(chan *astExpr),
-		symt: symTable{},
+		symc:       symc,
+		readAhead:  false,
+		astc:       make(chan *astExpr),
+		symt:       symTable{},
+		unresolved: []*astCallExpr{},
+		funcs:      map[string]*astFnStmt{},
 	}
 }
 
-func (p *parser)read() symbol {
+func (p *parser) read() symbol {
 	if !p.readAhead {
 		p.next = <-p.symc
 		p.readAhead = true
@@ -401,79 +330,9 @@ func (p *parser)read() symbol {
 	return p.next
 }
 
-func (p *parser)consume() {
+func (p *parser) consume() {
 	if p.readAhead {
 		p.readAhead = false
 	}
 }
 
-func (a *astExpr)String() string {
-	if a == nil {
-		return "NIL"
-	}
-	if a.numLit != nil {
-		return a.numLit.String()
-	}
-	if a.variable != nil {
-		return a.variable.String()
-	}
-	if a.unaryOpExpr != nil {
-		return a.unaryOpExpr.String()
-	}
-	if a.binOpExpr != nil {
-		return a.binOpExpr.String()
-	}
-	if a.callExpr != nil {
-		return a.callExpr.String()
-	}
-	if a.letExpr != nil {
-		return a.letExpr.String()
-	}
-	panic("malformed ast")
-}
-
-func (a *astNumLit)String() string {
-	return a.value
-}
-
-func (a *astVariable)String() string {
-	return a.value
-}
-
-func (a *astUnaryOpExpr)String() string {
-	return fmt.Sprintf("(- %s)", a.arg)
-}
-
-func (a *astBinOpExpr)String() string {
-	return fmt.Sprintf("(%s %s %s)", a.op, a.arg1, a.arg2)
-}
-
-func (a *astCallExpr)String() string {
-	if len(a.args) == 0 {
-		return fmt.Sprintf("(%s)", a.name)
-	}
-	args := []string{}
-	for _, arg := range a.args {
-		args = append(args, arg.String())
-	}
-	return fmt.Sprintf("(%s %s)", a.name, strings.Join(args, " "))
-}
-
-func (a *astLetExpr)String() string {
-	return fmt.Sprintf("(let (%s %s) %s)", a.varName, a.varInitExpr, a.body)
-}
-
-func (ot opType)String() string {
-	switch ot {
-	case OP_MINUS:
-		return "-"
-	case OP_PLUS:
-		return "+"
-	case OP_MULT:
-		return "*"
-	case OP_DIV:
-		return "/"
-	default:
-		panic("must implement translation for op")
-	}
-}

@@ -28,6 +28,7 @@ func main() {
 	fmt.Println("PARSED:")
 	fmt.Printf("%s\n", a.String())
 
+	fmt.Println("BUILDING")
 	mod, f, err := buildIR(a)
 	if err != nil {
 		log.Printf("error:", err)
