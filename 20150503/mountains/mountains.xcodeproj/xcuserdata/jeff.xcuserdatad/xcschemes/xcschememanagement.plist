@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>lander.xcscheme</key>
+		<key>mountains.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,12 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1F3F20831AF6F2600070302D</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>1F3F20951AF6F2600070302D</key>
+		<key>1F3F20701AF6F1450070302D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
