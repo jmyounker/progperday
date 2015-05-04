@@ -141,6 +141,9 @@ to not waste too much time while performing them.
 
 **20150504** - Code Jam problem to reverse words in a sentence.
 
+**20150506** - Code Jam problem to translate a message into SMS keypresses.
+
+
 ## Ideas
 * add functions to silly language
 * add functions to parser for silly language
