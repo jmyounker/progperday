@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cat *mall*.in | ./cj-sln.py > small.out
+
