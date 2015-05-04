@@ -5,7 +5,7 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>EAAD16C4-D978-499B-8CF9-BDC668CD2B6B</string>
+	<string>3386C920-82F5-40C4-A467-135A60356A18</string>
 	<key>IDESourceControlProjectName</key>
 	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
@@ -14,7 +14,7 @@
 		<string>github.com:jmyounker/progperday.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>20150503/mountains/mountains.xcodeproj/project.xcworkspace</string>
+	<string>20150503/lander/lander.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>0C9B999B517BEEEBC9040FBB2DAB9BD718AB8BD8</key>

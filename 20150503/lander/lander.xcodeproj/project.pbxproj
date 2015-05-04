@@ -12,6 +12,8 @@
 		1F3F208E1AF6F2600070302D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F3F208D1AF6F2600070302D /* Images.xcassets */; };
 		1F3F20911AF6F2600070302D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F3F208F1AF6F2600070302D /* Main.storyboard */; };
 		1F3F209D1AF6F2600070302D /* landerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3F209C1AF6F2600070302D /* landerTests.swift */; };
+		1F3F20A71AF6F2BD0070302D /* MoonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3F20A61AF6F2BD0070302D /* MoonViewController.swift */; };
+		1F3F20A91AF6F2FF0070302D /* MoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3F20A81AF6F2FF0070302D /* MoonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,8 @@
 		1F3F20961AF6F2600070302D /* landerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = landerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F3F209B1AF6F2600070302D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F3F209C1AF6F2600070302D /* landerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = landerTests.swift; sourceTree = "<group>"; };
+		1F3F20A61AF6F2BD0070302D /* MoonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonViewController.swift; sourceTree = "<group>"; };
+		1F3F20A81AF6F2FF0070302D /* MoonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,8 @@
 				1F3F208D1AF6F2600070302D /* Images.xcassets */,
 				1F3F208F1AF6F2600070302D /* Main.storyboard */,
 				1F3F20871AF6F2600070302D /* Supporting Files */,
+				1F3F20A61AF6F2BD0070302D /* MoonViewController.swift */,
+				1F3F20A81AF6F2FF0070302D /* MoonView.swift */,
 			);
 			path = lander;
 			sourceTree = "<group>";
@@ -208,6 +214,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F3F20A71AF6F2BD0070302D /* MoonViewController.swift in Sources */,
+				1F3F20A91AF6F2FF0070302D /* MoonView.swift in Sources */,
 				1F3F208C1AF6F2600070302D /* ViewController.swift in Sources */,
 				1F3F208A1AF6F2600070302D /* AppDelegate.swift in Sources */,
 			);
