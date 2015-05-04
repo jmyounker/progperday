@@ -137,6 +137,8 @@ to not waste too much time while performing them.
 
 **20150502** - A field of bouncing x's using curses.
 
+**20150503** - Swift program to draw a mountain range sihlouette on OSX.
+
 
 ## Ideas
 * add functions to silly language
@@ -154,7 +156,6 @@ to not waste too much time while performing them.
 * display graph from python
 * perform actions based on sentence
 * haskell monads?
-* osx draw landscape in silhouette
 * osx read keypresses
 * osx make lunar module steerable
 * make lunar lander game
