@@ -139,6 +139,7 @@ to not waste too much time while performing them.
 
 **20150503** - Swift program to draw a mountain range sihlouette on OSX.
 
+**20150504** - Code Jam problem to reverse words in a sentence.
 
 ## Ideas
 * add functions to silly language
