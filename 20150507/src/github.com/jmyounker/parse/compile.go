@@ -45,6 +45,7 @@ type compiler struct {
 
 func newCompiler() *compiler {
 	c := compiler{
+		bld : llvm.NewBuilder(),
 		varCnt: 0,
 		symt: symTable{},
 		symft: symTable{},
@@ -82,10 +83,9 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 		fnDef := llvm.AddFunction(mod, fn.name, fnType)
 		fnDef.SetFunctionCallConv(llvm.CCallConv)
 
-		c.symft.add(fn.name, &funcEntry{fn, fnDef})
+		c.symft.add(fn.name, &funcEntry{fn: fn, def: fnDef})
 	}
 
-	bld := llvm.NewBuilder()
 	for _, fn := range a.funcs {
 		feAny, ok := c.symft.get(fn.name)
 		if !ok {
@@ -96,13 +96,14 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 		for i := 0; i < len(fe.fn.args); i++ {
 			c.symt.add(fe.fn.args[i], fe.def.Param(i))
 		}
-		entry := llvm.AddBasicBlock(fe.def, fmt.Sprintf("%s_entry", fn.name))
-		bld.SetInsertPointAtEnd(entry)
-		retv, err := c.compileExpr(fn.body, "_retvn")
+		entry := llvm.AddBasicBlock(fe.def, fmt.Sprintf("_%s_entry", fe.fn.name))
+		c.bld.SetInsertPointAtEnd(entry)
+
+		retv, err := c.compileExpr(fn.body, c.newVar("_retv"))
 		if err != nil {
 			return nil, llvm.Value{}, err
 		}
-		bld.CreateRet(retv)
+		c.bld.CreateRet(retv)
 		c.symt.pop()
 	}
 
@@ -170,7 +171,6 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 	}
 	if a.callExpr != nil {
 		fe, ok := c.symft.get(a.callExpr.name)
-		fmt.Printf("%#v\n", fe)
 		if !ok {
 			panic(fmt.Sprintf("function %q should already be defined", a.callExpr.name))
 		}
@@ -183,8 +183,8 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 			}
 			args = append(args, res)
 		}
-		d := fe.(*funcEntry).def
-		return c.bld.CreateCall(d, args, vn), nil
+		def := fe.(*funcEntry).def
+		return c.bld.CreateCall(def, args, vn), nil
 	}
 	if a.letExpr != nil {
 		v := c.newVar(a.letExpr.varName)
@@ -201,11 +201,11 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 }
 
 func (c compiler) buildBinOp(f func(llvm.Value, llvm.Value, string) llvm.Value, arg1, arg2 *astExpr, vn string) (llvm.Value, error) {
-	expr1, err := c.compileExpr(arg1, "iL")
+	expr1, err := c.compileExpr(arg1, c.newVar("_iL"))
 	if err != nil {
 		return LLVM_ERR_VAL, err
 	}
-	expr2, err := c.compileExpr(arg2, "iR")
+	expr2, err := c.compileExpr(arg2, c.newVar("_iR"))
 	if err != nil {
 		return LLVM_ERR_VAL, err
 	}

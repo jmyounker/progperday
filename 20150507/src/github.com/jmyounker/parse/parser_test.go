@@ -31,7 +31,7 @@ var progTests = []struct{
 	want string
 }{
 //	{"(fn main () -4)", "(fn main () -4)"},
-	{"(fn main () (add 2 4)) (fn add (x y) (+ x y))", "(fn main () (add 2 4))(fn add (x y) (+ x y))"},
+	{"(fn add (x y) (+ x y)) (fn main () (add 2 4)) ", "(fn add (x y) (+ x y))(fn main () (add 2 4))"},
 }
 
 var errorTests = []string{
