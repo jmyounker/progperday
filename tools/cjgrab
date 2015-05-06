@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mv ~/Downloads/*mall*.in small.in
+mv ~/Downloads/*arge*.in large.in
+
