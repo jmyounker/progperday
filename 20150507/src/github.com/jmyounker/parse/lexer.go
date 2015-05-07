@@ -4,6 +4,8 @@ package main
 // will probably incorporate a parser, and then subsequently a compiler
 // via llvm.
 
+// TODO(jeff): Make silently consume CRLF
+
 import (
 	"fmt"
 	"unicode/utf8"
@@ -13,12 +15,14 @@ type lexer struct {
 	src string
 	consumed int
 	examining int
+	rawSymbol chan symbol
 	symbol chan symbol
 }
 
 func newLexer(src string) chan symbol {
-	sym := make(chan symbol)
-	lxr := lexer{src, 0, 0, sym}
+	rawSym := make(chan symbol)
+	sym := newKeywordTransformer(rawSym)
+	lxr := lexer{src, 0, 0, rawSym, sym}
 	go lxr.lex()
 	return sym
 }
@@ -28,7 +32,7 @@ func (lxr *lexer)lex() {
 	for {
 		state = state(lxr)
 		if state == nil {
-			close(lxr.symbol)
+			close(lxr.rawSymbol)
 			return
 		}
 	}
@@ -66,6 +70,7 @@ const (
 	SYM_CLOSE_PAREN
 	SYM_SYM
 	SYM_LET
+	SYM_FN
 	SYM_ERR
 )
 
@@ -98,34 +103,34 @@ func startSymState(lxr *lexer) lxrStateFn {
 		return nil
 	}
 	c := lxr.current()
-	if c == " " {
+	if isWhitespace(c) {
 		lxr.advance()
 		lxr.consume()
 		return startSymState
 	}
 	if c == "(" {
 		lxr.advance()
-		lxr.symbol <- symbol{SYM_OPEN_PAREN, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_OPEN_PAREN, lxr.produce()}
 		return startSymState
 	}
 	if c == ")" {
 		lxr.advance()
-		lxr.symbol <- symbol{SYM_CLOSE_PAREN, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_CLOSE_PAREN, lxr.produce()}
 		return startSymState
 	}
 	if c == "+" {
 		lxr.advance()
-		lxr.symbol <- symbol{SYM_OP, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return startSymState
 	}
 	if c == "*"{
 		lxr.advance()
-		lxr.symbol <- symbol{SYM_OP, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return startSymState
 	}
 	if c == "/" {
 		lxr.advance()
-		lxr.symbol <- symbol{SYM_OP, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return startSymState
 	}
 	if c == "-" {
@@ -140,90 +145,100 @@ func startSymState(lxr *lexer) lxrStateFn {
 		lxr.advance()
 		return numberState
 	}
-	lxr.symbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
+	lxr.rawSymbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
 }
 
 func symState(lxr *lexer) lxrStateFn {
 	if lxr.atEnd() {
-		lxr.symbol <- symbol{SYM_SYM, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_SYM, lxr.produce()}
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
-		lxr.symbol <- symbol{SYM_SYM, lxr.produce()}
+	if isWhitespace(c) || c == "(" || c == ")" {
+		lxr.rawSymbol <- symbol{SYM_SYM, lxr.produce()}
 		return startSymState
 	}
 	if isChar(c) || isDigit(c) {
 		lxr.advance()
 		return symState
 	}
-	lxr.symbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
+	lxr.rawSymbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
 }
 
 func negNumberState(lxr *lexer) lxrStateFn {
 	if lxr.atEnd() {
-		lxr.symbol <- symbol{SYM_OP, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
-		lxr.symbol <- symbol{SYM_OP, lxr.produce()}
+	if isWhitespace(c) || c == "(" || c == ")" {
+		lxr.rawSymbol <- symbol{SYM_OP, lxr.produce()}
 		return startSymState
 	}
 	if isDigit(c) {
 		lxr.advance()
 		return numberState
 	}
-	lxr.symbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
+	lxr.rawSymbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
 }
 
 func numberState(lxr *lexer) lxrStateFn {
 	if lxr.atEnd() {
-		lxr.symbol <- symbol{SYM_LIT, lxr.produce()}
+		lxr.rawSymbol <- symbol{SYM_LIT, lxr.produce()}
 		return nil
 	}
 	c := lxr.current()
-	if c == " " || c == "(" || c == ")" {
-		lxr.symbol <- symbol{SYM_LIT, lxr.produce()}
+	if isWhitespace(c) || c == "(" || c == ")" {
+		lxr.rawSymbol <- symbol{SYM_LIT, lxr.produce()}
 		return startSymState
 	}
 	if isDigit(c) {
 		lxr.advance()
 		return numberState
 	}
-	lxr.symbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
+	lxr.rawSymbol <- symbol{SYM_ERR, fmt.Sprintf("illegal symbol: %s", c)}
 	return nil
+}
+
+func isWhitespace(c string) bool {
+	return c == " " || c == "\n" || c == "\t"
 }
 
 // keywordLexer wraps a plain lexer and translates symType SYM_SYM into more specific
 // symbols
-type keywordLexer struct {
+type keywordTransformer struct {
 	symIn chan symbol
 	symOut chan symbol
+	terminate chan struct{}
 }
 
-func startKeywordLexer(symIn chan symbol, symOut chan symbol) {
-	kwl := keywordLexer{
+func newKeywordTransformer(symIn chan symbol) chan symbol {
+	kwt := keywordTransformer{
 		symIn: symIn,
-		symOut: symOut,
+		symOut: make(chan symbol),
 	}
-	go lexUp(&kwl)
+	go kwt.transformKeywords()
+	return kwt.symOut
 }
 
-func lexUp(kwl *keywordLexer) {
-	for sym := range kwl.symIn {
+func (kwt *keywordTransformer)transformKeywords() {
+	for sym := range kwt.symIn {
 		if sym.symType != SYM_SYM {
-			kwl.symOut <- sym
+			kwt.symOut <- sym
+			continue
 		}
 		switch sym.value {
 		case "let":
 			sym.symType = SYM_LET
+		case "fn":
+			sym.symType = SYM_FN
 		default:
 			// do nothing
 		}
-		kwl.symOut <- sym
+		kwt.symOut <- sym
 	}
+	close(kwt.symOut)
 }

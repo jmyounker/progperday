@@ -143,10 +143,10 @@ to not waste too much time while performing them.
 
 **20150506** - Code Jam problem to translate a message into SMS keypresses.
 
+**20150507** - Little language now has functions.
+
 
 ## Ideas
-* add functions to silly language
-* add functions to parser for silly language
 * ios app (hello world or a little more)
 * ios app that responds to gyroscope
 * ios app that signals others over wifi network
