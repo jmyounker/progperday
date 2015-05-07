@@ -52,22 +52,22 @@ func newCompiler() *compiler {
 	}
 	c.symft.push()
 
-	c.symft.add("net", &funcDefUnary{})
-	c.symft.add("plus", &funcDefBinary{c.bld.CreateFAdd})
-	c.symft.add("minus", &funcDefBinary{c.bld.CreateFSub})
-	c.symft.add("mult", &funcDefBinary{c.bld.CreateFMul})
-	c.symft.add("div", &funcDefBinary{c.bld.CreateFDiv})
+	c.symft.add("net", funcDefUnary{})
+	c.symft.add("plus", funcDefBinary{c.bld.CreateFAdd})
+	c.symft.add("minus", funcDefBinary{c.bld.CreateFSub})
+	c.symft.add("mult", funcDefBinary{c.bld.CreateFMul})
+	c.symft.add("div", funcDefBinary{c.bld.CreateFDiv})
 	return &c
 }
 
 type funcDef interface {
-	buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error)
+	buildCall(c compiler, a astCallExpr, vn string) (llvm.Value, error)
 }
 
 type funcDefUnary struct {
 }
 
-func (fd *funcDefUnary)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+func (fd funcDefUnary)buildCall(c compiler, a astCallExpr, vn string) (llvm.Value, error) {
 	expr, err := c.compileExpr(a.args[0], c.newVar("_i"))
 	if err != nil {
 		return LLVM_ERR_VAL, err
@@ -75,12 +75,11 @@ func (fd *funcDefUnary)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Va
 	return c.bld.CreateFNeg(expr, vn), nil
 }
 
-
 type funcDefBinary struct {
 	opcodeBuilder func(llvm.Value, llvm.Value, string) llvm.Value
 }
 
-func (fd* funcDefBinary)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+func (fd funcDefBinary)buildCall(c compiler, a astCallExpr, vn string) (llvm.Value, error) {
 	expr1, err := c.compileExpr(a.args[0], c.newVar("_iL"))
 	if err != nil {
 		return LLVM_ERR_VAL, err
@@ -97,7 +96,7 @@ type funcDefGeneric struct {
 	def llvm.Value
 }
 
-func (fd* funcDefGeneric)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+func (fd funcDefGeneric)buildCall(c compiler, a astCallExpr, vn string) (llvm.Value, error) {
 	args := []llvm.Value{}
 	for i, arg := range a.args {
 		an := c.newVar(fmt.Sprintf("%s%d", a.name, i))
@@ -147,7 +146,7 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 		for i := 0; i < len(fe.fn.args); i++ {
 			c.symt.add(fe.fn.args[i], fe.def.Param(i))
 		}
-		entry := llvm.AddBasicBlock(fe.def, fmt.Sprintf("_%s_entry", fe.fn.name))
+		entry := llvm.AddBasicBlock(fe.def, fmt.Sprintf("_%s_entry", fn.name))
 		c.bld.SetInsertPointAtEnd(entry)
 
 		retv, err := c.compileExpr(fn.body, c.newVar("_retv"))
@@ -170,38 +169,38 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 	return &mod, feMain.(*funcDefGeneric).def, nil
 }
 
-func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
-	if a.numLit != nil {
-		val, err := strconv.ParseFloat(a.numLit.value, 64)
+func (c compiler) compileExpr(a astExpr, vn string) (llvm.Value, error) {
+	switch a := a.(type) {
+
+	case astNumLit:
+		val, err := strconv.ParseFloat(a.value, 64)
 		if err != nil {
-			return LLVM_ERR_VAL, fmt.Errorf("could not convert %s to float", a.numLit.value)
+			return LLVM_ERR_VAL, fmt.Errorf("could not convert %s to float", a.value)
 		}
 		return llvm.ConstFloat(llvm.DoubleType(), val), nil
-	}
-	if a.variable != nil {
-		value, ok := c.symt.get(a.variable.value)
+	case astVariable:
+		value, ok := c.symt.get(a.value)
 		if !ok {
-			return LLVM_ERR_VAL, fmt.Errorf("could not find variable %s", a.variable.value)
+			return LLVM_ERR_VAL, fmt.Errorf("could not find variable %s", a.value)
 		}
 		return value.(llvm.Value), nil
-	}
-	if a.callExpr != nil {
-		fe, ok := c.symft.get(a.callExpr.name)
+	case astCallExpr:
+		fe, ok := c.symft.get(a.name)
 		if !ok {
-			panic(fmt.Sprintf("function %q should already be defined", a.callExpr.name))
+			panic(fmt.Sprintf("function %q should already be defined", a.name))
 		}
-		return fe.(funcDef).buildCall(c, a.callExpr, vn)
-	}
-	if a.letExpr != nil {
-		v := c.newVar(a.letExpr.varName)
-		val, err := c.compileExpr(a.letExpr.varInitExpr, v)
+		return fe.(funcDef).buildCall(c, a, vn)
+	case astLetExpr:
+		v := c.newVar(a.varName)
+		val, err := c.compileExpr(a.varInitExpr, v)
 		if err != nil {
 			return val, err
 		}
 		c.symt.push()
-		c.symt.add(a.letExpr.varName, val)
+		c.symt.add(a.varName, val)
 		defer c.symt.pop()
-		return c.compileExpr(a.letExpr.body, vn)
+		return c.compileExpr(a.body, vn)
+	default:
+		panic(fmt.Sprintf("ast type %#v has not been handled yet", a))
 	}
-	panic("ast type has not been handled yet")
 }

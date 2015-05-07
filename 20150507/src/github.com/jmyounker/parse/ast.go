@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-type astProg struct {
-	funcs map[string]*astFnStmt
+type ast interface {
 }
 
-type astExpr struct {
-	numLit      *astNumLit
-	variable    *astVariable
-	callExpr    *astCallExpr
-	letExpr     *astLetExpr
+type astExpr interface {
+	String() string
+}
+
+type astProg struct {
+	funcs map[string]*astFnStmt
 }
 
 type astNumLit struct {
@@ -25,95 +25,83 @@ type astVariable struct {
 }
 
 type astUnaryOpExpr struct {
-	arg *astExpr
+	arg astExpr
 }
 
 type astBinOpExpr struct {
 	op   opType
-	arg1 *astExpr
-	arg2 *astExpr
+	arg1 astExpr
+	arg2 astExpr
 }
 
 type astCallExpr struct {
 	name string
-	args []*astExpr
+	args []astExpr
 	repr interface{}
 }
 
 type astLetExpr struct {
 	varName     string
-	varInitExpr *astExpr
-	body        *astExpr
+	varInitExpr astExpr
+	body        astExpr
 }
 
 type astFnStmt struct {
 	name string
 	args []string
-	body *astExpr
+	body astExpr
 }
 
-func newNumLitExpr(x string) *astExpr {
-	return &astExpr{
-		numLit: &astNumLit{
-			value: x,
+func newNumLitExpr(x string) astExpr {
+	return astNumLit{
+		value: x,
+	}
+}
+
+func newVariable(x string) astExpr {
+	return astVariable{
+		value: x,
+	}
+}
+
+func newUnaryOpExpr(arg astExpr) astExpr {
+	return astCallExpr{
+		name: "neg",
+		args: []astExpr{arg},
+		repr: astUnaryOpExpr{
+			arg: arg,
 		},
 	}
 }
 
-func newVariable(x string) *astExpr {
-	return &astExpr{
-		variable: &astVariable{
-			value: x,
+func newBinaryOpExpr(fn string, op opType, arg1, arg2 astExpr) astExpr {
+	return astCallExpr{
+		name: fn,
+		args: []astExpr{arg1, arg2},
+		repr: astBinOpExpr{
+			op: op,
+			arg1: arg1,
+			arg2: arg2,
 		},
 	}
 }
 
-func newUnaryOpExpr(arg *astExpr) *astExpr {
-	return &astExpr{
-		callExpr: &astCallExpr{
-			name: "neg",
-			args: []*astExpr{arg},
-			repr: &astUnaryOpExpr{
-				arg: arg,
-			},
-		},
+func newCallExpr(name string, args []astExpr) *astCallExpr {
+	return &astCallExpr{
+		name: name,
+		args: args,
 	}
 }
 
-func newBinaryOpExpr(fn string, op opType, arg1, arg2 *astExpr) *astExpr {
-	return &astExpr{
-		callExpr: &astCallExpr{
-			name: fn,
-			args: []*astExpr{arg1, arg2},
-			repr: &astBinOpExpr{
-				op: op,
-				arg1: arg1,
-				arg2: arg2,
-			},
-		},
+func newLetExpr(name string, initExpr, body astExpr) astExpr {
+	return astLetExpr{
+		varName:     name,
+		varInitExpr: initExpr,
+		body:        body,
 	}
 }
 
-func newCallExpr(name string, args []*astExpr) *astExpr {
-	return &astExpr{
-		callExpr: &astCallExpr{
-			name: name,
-			args: args,
-		},
-	}
-}
-
-func newLetExpr(name string, initExpr, body *astExpr) *astExpr {
-	return &astExpr{
-		letExpr: &astLetExpr{
-			varName:     name,
-			varInitExpr: initExpr,
-			body:        body,
-		},
-	}
-}
-
-func newFnStmt(name string, args []string, body *astExpr) *astFnStmt {
+func newFnStmt(name string, args []string, body astExpr) *astFnStmt {
 	return &astFnStmt{
 		name: name,
 		args: args,
@@ -121,10 +109,7 @@ func newFnStmt(name string, args []string, body *astExpr) *astFnStmt {
 	}
 }
 
-func (a *astProg) String() string {
-	if a == nil {
-		return "NIL"
-	}
+func (a astProg) String() string {
 	r := ""
 	for _, fn := range a.funcs {
 		r += fn.String()
@@ -132,7 +117,7 @@ func (a *astProg) String() string {
 	return r
 }
 
-func (a *astFnStmt) String() string {
+func (a astFnStmt) String() string {
 	return fmt.Sprintf(
 		"(fn %s (%s) %s)",
 		a.name,
@@ -140,47 +125,31 @@ func (a *astFnStmt) String() string {
 		a.body)
 }
 
-func (a *astExpr) String() string {
-	if a.numLit != nil {
-		return a.numLit.String()
-	}
-	if a.variable != nil {
-		return a.variable.String()
-	}
-	if a.callExpr != nil {
-		return a.callExpr.String()
-	}
-	if a.letExpr != nil {
-		return a.letExpr.String()
-	}
-	panic("malformed ast")
-}
-
-func (a *astNumLit) String() string {
+func (a astNumLit) String() string {
 	return a.value
 }
 
-func (a *astVariable) String() string {
+func (a astVariable) String() string {
 	return a.value
 }
 
-func (a *astUnaryOpExpr) String() string {
+func (a astUnaryOpExpr) String() string {
 	return fmt.Sprintf("(- %s)", a.arg)
 }
 
-func (a *astBinOpExpr) String() string {
+func (a astBinOpExpr) String() string {
 	return fmt.Sprintf("(%s %s %s)", a.op, a.arg1, a.arg2)
 }
 
-func (a *astCallExpr) String() string {
+func (a astCallExpr) String() string {
 	if len(a.args) == 0 {
 		return fmt.Sprintf("(%s)", a.name)
 	}
 	if a.repr != nil {
 		switch r := a.repr.(type) {
-		case *astUnaryOpExpr:
+		case astUnaryOpExpr:
 			return r.String()
-		case *astBinOpExpr:
+		case astBinOpExpr:
 			return r.String()
 		default:
 			panic("unknown expression simpification")
@@ -193,7 +162,7 @@ func (a *astCallExpr) String() string {
 	return fmt.Sprintf("(%s %s)", a.name, strings.Join(args, " "))
 }
 
-func (a *astLetExpr) String() string {
+func (a astLetExpr) String() string {
 	return fmt.Sprintf("(let (%s %s) %s)", a.varName, a.varInitExpr, a.body)
 }
 

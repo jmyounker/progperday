@@ -85,7 +85,7 @@ func TestProgParser(t *testing.T) {
 	}
 }
 
-func parseExprFrom(symc chan symbol) (*astExpr, error) {
+func parseExprFrom(symc chan symbol) (astExpr, error) {
 	p := newParser(symc)
 	sym := p.read()
 	// horrible, horrible hack

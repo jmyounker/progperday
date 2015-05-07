@@ -76,7 +76,7 @@ func parseProg(p *parser) (*astProg, error) {
 	return &astProg{funcs: p.funcs}, nil
 }
 
-func parseExpr(p *parser) (*astExpr, error) {
+func parseExpr(p *parser) (astExpr, error) {
 	// terminates successfully after consuming all tokens in the expression
 	sym := p.read()
 	switch sym.symType {
@@ -106,7 +106,7 @@ func parseExpr(p *parser) (*astExpr, error) {
 	}
 }
 
-func parseInner(p *parser) (*astExpr, error) {
+func parseInner(p *parser) (astExpr, error) {
 	// last sym read was SYM_OPEN_PARENS and it was consumed
 	// terminates with final ')' unconsumed
 	sym := p.read()
@@ -122,13 +122,13 @@ func parseInner(p *parser) (*astExpr, error) {
 	return nil, fmt.Errorf("expected an operation or 'let', but got %s", sym.value)
 }
 
-func parseOp(p *parser) (*astExpr, error) {
+func parseOp(p *parser) (astExpr, error) {
 	// last sym read was SYM_OP and it is unconsumed
 	// terminates with final ')' unconsumed
 	sym := p.read()
 	op := newOpTypeFromSym(sym)
 	p.consume()
-	args := []*astExpr{}
+	args := []astExpr{}
 	for ; sym.symType != SYM_CLOSE_PAREN; sym = p.read() {
 		arg, err := parseExpr(p)
 		if err != nil {
@@ -151,7 +151,7 @@ func parseOp(p *parser) (*astExpr, error) {
 	return newBinaryOpExpr(funcNameForBinOp(op), op, args[0], args[1]), nil
 }
 
-func parseLetExpr(p *parser) (*astExpr, error) {
+func parseLetExpr(p *parser) (astExpr, error) {
 	// last sym read was SYM_LET and it is unconsumed
 	// terminates successfully with final ')' still unconsumed
 	p.consume() // eat 'let'
@@ -253,7 +253,7 @@ argLoop:
 	return newFnStmt(name, args, body), nil
 }
 
-func parseCallExpr(p *parser) (*astExpr, error) {
+func parseCallExpr(p *parser) (astExpr, error) {
 	// last sym read was SYM_SYM and it is unconsumed
 	// terminates successfully with final ')' still unconsumed
 
@@ -266,7 +266,7 @@ func parseCallExpr(p *parser) (*astExpr, error) {
 	name := sym.value
 
 	// read arguments
-	args := []*astExpr{}
+	args := []astExpr{}
 	for true {
 		sym = p.read()
 		if sym.symType == SYM_CLOSE_PAREN {
@@ -280,8 +280,8 @@ func parseCallExpr(p *parser) (*astExpr, error) {
 	}
 
 	ce := newCallExpr(name, args)
-	p.unresolved = append(p.unresolved, ce.callExpr)
-	return ce, nil
+	p.unresolved = append(p.unresolved, ce)
+	return *ce, nil
 }
 
 func resolveFuncs(p *parser) error {
