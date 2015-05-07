@@ -12,8 +12,6 @@ type astProg struct {
 type astExpr struct {
 	numLit      *astNumLit
 	variable    *astVariable
-	unaryOpExpr *astUnaryOpExpr
-	binOpExpr   *astBinOpExpr
 	callExpr    *astCallExpr
 	letExpr     *astLetExpr
 }
@@ -39,6 +37,7 @@ type astBinOpExpr struct {
 type astCallExpr struct {
 	name string
 	args []*astExpr
+	repr interface{}
 }
 
 type astLetExpr struct {
@@ -71,18 +70,26 @@ func newVariable(x string) *astExpr {
 
 func newUnaryOpExpr(arg *astExpr) *astExpr {
 	return &astExpr{
-		unaryOpExpr: &astUnaryOpExpr{
-			arg: arg,
+		callExpr: &astCallExpr{
+			name: "neg",
+			args: []*astExpr{arg},
+			repr: &astUnaryOpExpr{
+				arg: arg,
+			},
 		},
 	}
 }
 
-func newBinaryOpExpr(op opType, arg1, arg2 *astExpr) *astExpr {
+func newBinaryOpExpr(fn string, op opType, arg1, arg2 *astExpr) *astExpr {
 	return &astExpr{
-		binOpExpr: &astBinOpExpr{
-			op:   op,
-			arg1: arg1,
-			arg2: arg2,
+		callExpr: &astCallExpr{
+			name: fn,
+			args: []*astExpr{arg1, arg2},
+			repr: &astBinOpExpr{
+				op: op,
+				arg1: arg1,
+				arg2: arg2,
+			},
 		},
 	}
 }
@@ -140,12 +147,6 @@ func (a *astExpr) String() string {
 	if a.variable != nil {
 		return a.variable.String()
 	}
-	if a.unaryOpExpr != nil {
-		return a.unaryOpExpr.String()
-	}
-	if a.binOpExpr != nil {
-		return a.binOpExpr.String()
-	}
 	if a.callExpr != nil {
 		return a.callExpr.String()
 	}
@@ -174,6 +175,16 @@ func (a *astBinOpExpr) String() string {
 func (a *astCallExpr) String() string {
 	if len(a.args) == 0 {
 		return fmt.Sprintf("(%s)", a.name)
+	}
+	if a.repr != nil {
+		switch r := a.repr.(type) {
+		case *astUnaryOpExpr:
+			return r.String()
+		case *astBinOpExpr:
+			return r.String()
+		default:
+			panic("unknown expression simpification")
+		}
 	}
 	args := []string{}
 	for _, arg := range a.args {

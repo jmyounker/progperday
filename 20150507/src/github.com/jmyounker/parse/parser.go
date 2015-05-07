@@ -148,7 +148,7 @@ func parseOp(p *parser) (*astExpr, error) {
 		}
 		return newUnaryOpExpr(args[0]), nil
 	}
-	return newBinaryOpExpr(op, args[0], args[1]), nil
+	return newBinaryOpExpr(funcNameForBinOp(op), op, args[0], args[1]), nil
 }
 
 func parseLetExpr(p *parser) (*astExpr, error) {
@@ -336,3 +336,17 @@ func (p *parser) consume() {
 	}
 }
 
+func funcNameForBinOp(op opType) string {
+	switch op {
+	case OP_MINUS:
+		return "minus"
+	case OP_PLUS:
+		return "plus"
+	case OP_MULT:
+		return "mult"
+	case OP_DIV:
+		return "div"
+	default:
+		panic("must implement func translation for binary op")
+	}
+}

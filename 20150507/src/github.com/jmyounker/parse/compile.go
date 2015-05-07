@@ -51,12 +51,63 @@ func newCompiler() *compiler {
 		symft: symTable{},
 	}
 	c.symft.push()
+
+	c.symft.add("net", &funcDefUnary{})
+	c.symft.add("plus", &funcDefBinary{c.bld.CreateFAdd})
+	c.symft.add("minus", &funcDefBinary{c.bld.CreateFSub})
+	c.symft.add("mult", &funcDefBinary{c.bld.CreateFMul})
+	c.symft.add("div", &funcDefBinary{c.bld.CreateFDiv})
 	return &c
 }
 
-type funcEntry struct {
+type funcDef interface {
+	buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error)
+}
+
+type funcDefUnary struct {
+}
+
+func (fd *funcDefUnary)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+	expr, err := c.compileExpr(a.args[0], c.newVar("_i"))
+	if err != nil {
+		return LLVM_ERR_VAL, err
+	}
+	return c.bld.CreateFNeg(expr, vn), nil
+}
+
+
+type funcDefBinary struct {
+	opcodeBuilder func(llvm.Value, llvm.Value, string) llvm.Value
+}
+
+func (fd* funcDefBinary)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+	expr1, err := c.compileExpr(a.args[0], c.newVar("_iL"))
+	if err != nil {
+		return LLVM_ERR_VAL, err
+	}
+	expr2, err := c.compileExpr(a.args[1], c.newVar("_iR"))
+	if err != nil {
+		return LLVM_ERR_VAL, err
+	}
+	return fd.opcodeBuilder(expr1, expr2, vn), nil
+}
+
+type funcDefGeneric struct {
 	fn  *astFnStmt
 	def llvm.Value
+}
+
+func (fd* funcDefGeneric)buildCall(c compiler, a *astCallExpr, vn string) (llvm.Value, error) {
+	args := []llvm.Value{}
+	for i, arg := range a.args {
+		an := c.newVar(fmt.Sprintf("%s%d", a.name, i))
+		res, err := c.compileExpr(arg, an)
+		if err != nil {
+			return LLVM_ERR_VAL, err
+		}
+		args = append(args, res)
+	}
+	return c.bld.CreateCall(fd.def, args, vn), nil
 }
 
 func (c compiler) dispose() {
@@ -83,7 +134,7 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 		fnDef := llvm.AddFunction(mod, fn.name, fnType)
 		fnDef.SetFunctionCallConv(llvm.CCallConv)
 
-		c.symft.add(fn.name, &funcEntry{fn: fn, def: fnDef})
+		c.symft.add(fn.name, &funcDefGeneric{fn: fn, def: fnDef})
 	}
 
 	for _, fn := range a.funcs {
@@ -91,7 +142,7 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 		if !ok {
 			panic("all functions should have been created here")
 		}
-		fe := feAny.(*funcEntry)
+		fe := feAny.(*funcDefGeneric)
 		c.symt.push()
 		for i := 0; i < len(fe.fn.args); i++ {
 			c.symt.add(fe.fn.args[i], fe.def.Param(i))
@@ -116,20 +167,7 @@ func buildIR(a *astProg) (*llvm.Module, llvm.Value, error) {
 	if !ok {
 		panic("expected to fine a main function")
 	}
-	return &mod, feMain.(*funcEntry).def, nil
-}
-
-func (c compiler) compileProg(a *astProg) error {
-	for _, fn := range a.funcs {
-		if err := c.compileFunc(fn); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (c compiler) compileFunc(a *astFnStmt) error {
- 	return nil
+	return &mod, feMain.(*funcDefGeneric).def, nil
 }
 
 func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
@@ -147,44 +185,12 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 		}
 		return value.(llvm.Value), nil
 	}
-	if a.unaryOpExpr != nil {
-		expr1, err := c.compileExpr(a.unaryOpExpr.arg, "iU")
-		if err != nil {
-			return LLVM_ERR_VAL, err
-		}
-		return c.bld.CreateFNeg(expr1, vn), nil
-	}
-	if a.binOpExpr != nil {
-		e := a.binOpExpr
-		switch e.op {
-		case OP_MINUS:
-			return c.buildBinOp(c.bld.CreateFSub, e.arg1, e.arg2, vn)
-		case OP_PLUS:
-			return c.buildBinOp(c.bld.CreateFAdd, e.arg1, e.arg2, vn)
-		case OP_MULT:
-			return c.buildBinOp(c.bld.CreateFMul, e.arg1, e.arg2, vn)
-		case OP_DIV:
-			return c.buildBinOp(c.bld.CreateFDiv, e.arg1, e.arg2, vn)
-		default:
-			panic("an operation has not been implemented yet")
-		}
-	}
 	if a.callExpr != nil {
 		fe, ok := c.symft.get(a.callExpr.name)
 		if !ok {
 			panic(fmt.Sprintf("function %q should already be defined", a.callExpr.name))
 		}
-		args := []llvm.Value{}
-		for i, arg := range a.callExpr.args {
-			an := c.newVar(fmt.Sprintf("%s%d", a.callExpr.name, i))
-			res, err := c.compileExpr(arg, an)
-			if err != nil {
-				return LLVM_ERR_VAL, err
-			}
-			args = append(args, res)
-		}
-		def := fe.(*funcEntry).def
-		return c.bld.CreateCall(def, args, vn), nil
+		return fe.(funcDef).buildCall(c, a.callExpr, vn)
 	}
 	if a.letExpr != nil {
 		v := c.newVar(a.letExpr.varName)
@@ -198,16 +204,4 @@ func (c compiler) compileExpr(a *astExpr, vn string) (llvm.Value, error) {
 		return c.compileExpr(a.letExpr.body, vn)
 	}
 	panic("ast type has not been handled yet")
-}
-
-func (c compiler) buildBinOp(f func(llvm.Value, llvm.Value, string) llvm.Value, arg1, arg2 *astExpr, vn string) (llvm.Value, error) {
-	expr1, err := c.compileExpr(arg1, c.newVar("_iL"))
-	if err != nil {
-		return LLVM_ERR_VAL, err
-	}
-	expr2, err := c.compileExpr(arg2, c.newVar("_iR"))
-	if err != nil {
-		return LLVM_ERR_VAL, err
-	}
-	return f(expr1, expr2, vn), nil
 }
