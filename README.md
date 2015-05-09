@@ -145,6 +145,8 @@ to not waste too much time while performing them.
 
 **20150507** - Little language now has functions.
 
+**20150508** - Code Jam problem find smallest dot product of two vectors.
+
 
 ## Ideas
 * ios app (hello world or a little more)
@@ -172,7 +174,6 @@ to not waste too much time while performing them.
 * translate a continue statement into LLVM IR
 * translate a while loop PT into LLVM IR
 * translate a for-while loop parse tree into LLVM IR
-* translate a function definition into LLVM IR
 * translate an anonymous function definition into LLVM IR
 * translate a closure into LLVM IR
 
