@@ -147,6 +147,9 @@ to not waste too much time while performing them.
 
 **20150508** - Code Jam problem find smallest dot product of two vectors.
 
+**20150509** - Little language now has if-then-else expressions.
+
+
 
 ## Ideas
 * ios app (hello world or a little more)
@@ -167,7 +170,6 @@ to not waste too much time while performing them.
 * make lunar lander game
 * make a smarter tic-tac-toe
 * A* algorithm
-* translate an if-then-else parse tree into LLVM IR
 * translate a case statement parse tree into LLVM IR
 * translate an infinite loop into LLVM IR
 * translate a break statement into LLVM IR
