@@ -151,6 +151,9 @@ to not waste too much time while performing them.
 
 **20150510** - Code Jam problem to find number of possible words from a dictionary.
 
+**20150511** - SICP 1.16a - exponentiation in logarithmic time
+
+
 ## Ideas
 * ios app (hello world or a little more)
 * ios app that responds to gyroscope
