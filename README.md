@@ -155,6 +155,8 @@ to not waste too much time while performing them.
 
 **20150512** - SICP 1.18 - Multiplication in logarithmic time.
 
+**20150513** - Code Jam problem to find number to add to surpass sequential thresholds.
+
 
 ## Ideas
 * ios app (hello world or a little more)
