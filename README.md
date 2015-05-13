@@ -151,7 +151,9 @@ to not waste too much time while performing them.
 
 **20150510** - Code Jam problem to find number of possible words from a dictionary.
 
-**20150511** - SICP 1.16a - exponentiation in logarithmic time
+**20150511** - SICP 1.16 - Exponentiation in logarithmic time.
+
+**20150512** - SICP 1.18 - Multiplication in logarithmic time.
 
 
 ## Ideas
