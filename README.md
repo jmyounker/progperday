@@ -157,6 +157,8 @@ to not waste too much time while performing them.
 
 **20150513** - Code Jam problem to find number to add to surpass sequential thresholds.
 
+**20150514** - Compute GCD in Scheme in logarithmic time.
+
 
 ## Ideas
 * ios app (hello world or a little more)
