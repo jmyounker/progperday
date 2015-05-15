@@ -2,10 +2,9 @@
     (gcd-fast-iter (max (abs x) (abs y)) (min (abs x) (abs y))))
 
 (define (gcd-fast-iter x y)                            
-  (let ((r (remainder x y)))
-    (if (= r 0)
+    (if (= y 0)
         y
-        (gcd-fast-iter y r))))
+        (gcd-fast-iter y (remainder x y))))
 
 (= (gcd-fast 24 16) 8)
 (= (gcd-fast 15 1) 1)
