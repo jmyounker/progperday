@@ -159,6 +159,8 @@ to not waste too much time while performing them.
 
 **20150514** - Compute GCD in Scheme in logarithmic time.
 
+**20150515** - Too late to be productive.
+
 
 ## Ideas
 * ios app (hello world or a little more)

@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import sys
+import time
+
+print "well...",
+sys.stdout.flush()
+time.sleep(1.25)
+
+print "it's getting late...",
+sys.stdout.flush()
+time.sleep(1.5)
+
+print "or,",
+sys.stdout.flush()
+time.sleep(0.3)
+
+print "rather early."
+sys.stdout.flush()
+time.sleep(0.9)
+
+print "So I should go to sleep now."
+time.sleep(2.75)
+
+print "Good night!"
