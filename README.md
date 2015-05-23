@@ -161,6 +161,8 @@ to not waste too much time while performing them.
 
 **20150515** - Too late to be productive.
 
+**20150521** - Code Jam problem to translate between number bases.
+
 
 ## Ideas
 * ios app (hello world or a little more)
