@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+
+import time
+
+print "oh"
+time.sleep(0.5)
+print "    where is the..."
+time.sleep(1.0)
+print "Cat."
+print ""
+time.sleep(0.85)
+print "George?"
+time.sleep(1.5)
+print "Where are you George?"
+time.sleep(3.0)
+
