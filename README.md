@@ -165,6 +165,8 @@ to not waste too much time while performing them.
 
 **20150523** - A poem of cat problems.
 
+**20150524** - Code Jam problem to minimize number of directories to create.
+
 
 ## Ideas
 * ios app (hello world or a little more)
