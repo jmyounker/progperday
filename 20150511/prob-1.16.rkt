@@ -1,3 +1,5 @@
+#lang R5RS
+
 (define (expo b n)
   (if (evenp n)
       (expo-even b n)
