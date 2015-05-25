@@ -167,6 +167,8 @@ to not waste too much time while performing them.
 
 **20150524** - Code Jam problem to minimize number of directories to create.
 
+**20150525** - SICP 1.31 - Generalize process of summation to multiplication.
+
 
 ## Ideas
 * ios app (hello world or a little more)
