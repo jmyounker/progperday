@@ -169,6 +169,8 @@ to not waste too much time while performing them.
 
 **20150525** - SICP 1.31 - Generalize process of summation to multiplication.
 
+**20150526** - SICP 1.33 - Filtered Acuumulate.
+
 
 ## Ideas
 * ios app (hello world or a little more)
