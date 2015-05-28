@@ -171,6 +171,8 @@ to not waste too much time while performing them.
 
 **20150526** - SICP 1.33 - Filtered Acuumulate.
 
+**20150527** - SICP 2.5 - Twisted representation for pairs of integers greater than zero.
+
 
 ## Ideas
 * ios app (hello world or a little more)
