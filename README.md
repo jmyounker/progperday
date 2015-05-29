@@ -173,6 +173,8 @@ to not waste too much time while performing them.
 
 **20150527** - SICP 2.5 - Twisted representation for pairs of integers greater than zero.
 
+**20150528** - SICP 1.37 - Continued fraction approximations.
+
 
 ## Ideas
 * ios app (hello world or a little more)
