@@ -175,6 +175,8 @@ to not waste too much time while performing them.
 
 **20150528** - SICP 1.37 - Continued fraction approximations.
 
+**20150529** - SICP 1.43 - Repeated composition.
+
 
 ## Ideas
 * ios app (hello world or a little more)
