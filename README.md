@@ -181,6 +181,8 @@ to not waste too much time while performing them.
 
 **20150531** - SICP 1.45 - Function smoothing.
 
+**20150601** - SICP 2.12 - Center interval with categorized multiplication.
+
 
 ## Ideas
 * ios app (hello world or a little more)
