@@ -177,6 +177,10 @@ to not waste too much time while performing them.
 
 **20150529** - SICP 1.43 - Repeated composition.
 
+**20150530** - FAIL (technically I didn't sleep.)
+
+**20150531** - SICP 1.45 - Function smoothing.
+
 
 ## Ideas
 * ios app (hello world or a little more)
