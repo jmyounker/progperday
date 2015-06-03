@@ -183,6 +183,8 @@ to not waste too much time while performing them.
 
 **20150601** - SICP 2.12 - Center interval with categorized multiplication.
 
+**20150602** - Framework of program for Dawn's perpetual slideshow art project.
+
 
 ## Ideas
 * ios app (hello world or a little more)
