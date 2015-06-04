@@ -185,6 +185,8 @@ to not waste too much time while performing them.
 
 **20150602** - Framework of program for Dawn's perpetual slideshow art project.
 
+**20150603** - Random walk written in scratch.
+
 
 ## Ideas
 * ios app (hello world or a little more)
