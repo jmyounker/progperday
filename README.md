@@ -193,6 +193,8 @@ to not waste too much time while performing them.
 
 **20150606** - SICP 2.20 - Find items in a list that have the same parity.
 
+**20150607** - SICP 2.23 - Define for-each in scheme.
+
 
 ## Ideas
 * ios app (hello world or a little more)
