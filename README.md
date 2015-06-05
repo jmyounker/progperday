@@ -187,6 +187,8 @@ to not waste too much time while performing them.
 
 **20150603** - Random walk written in scratch.
 
+**20150604** - Play sound when UDP packet arrives.
+
 
 ## Ideas
 * ios app (hello world or a little more)
@@ -195,7 +197,6 @@ to not waste too much time while performing them.
 * read chart from wikipedia
 * collect info from multiple program runs and create CSV
 * show CSV data using javascript
-* create osx server process that plays sounds when message received
 * create osx server process that alters continuous sounds when message received
 * infinite knapsack problem
 * hashtable from scratch
