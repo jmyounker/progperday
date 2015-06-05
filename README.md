@@ -189,6 +189,8 @@ to not waste too much time while performing them.
 
 **20150604** - Play sound when UDP packet arrives.
 
+**20150605** - SICP 2.18 - Reverse a list scheme.
+
 
 ## Ideas
 * ios app (hello world or a little more)
