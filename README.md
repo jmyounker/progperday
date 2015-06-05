@@ -189,7 +189,9 @@ to not waste too much time while performing them.
 
 **20150604** - Play sound when UDP packet arrives.
 
-**20150605** - SICP 2.18 - Reverse a list scheme.
+**20150605** - SICP 2.18 - Reverse a list in scheme.
+
+**20150606** - SICP 2.20 - Find items in a list that have the same parity.
 
 
 ## Ideas
